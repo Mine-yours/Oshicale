@@ -1,0 +1,97 @@
+{
+  "source_url": "https://www.asiankung-fu.com/s/n80/page/smoj_live?ima=0705",
+  "timestamp": "20251111T093038460618Z",
+  "raw_llm_output": "[\n  {\n    \"title\": \"尽未来祭 2025\",\n    \"start\": \"2025-11-24T18:00:00+09:00\",\n    \"end\": \"2025-11-24T20:00:00+09:00\",\n    \"location\": \"幕張メッセ国際展示場9-11ホール\",\n    \"url\": \"https://jinmiraisai.com/\",\n    \"description\": \"\",\n    \"source_id\": \"20251124-jinmiraisai\"\n  },\n  {\n    \"title\": \"MERRY ROCK PARADE 2025\",\n    \"start\": \"2025-12-20T18:00:00+09:00\",\n    \"end\": \"2025-12-20T20:00:00+09:00\",\n    \"location\": \"ポートメッセなごや\",\n    \"url\": \"https://www.merryrockparade.jp/\",\n    \"description\": \"\",\n    \"source_id\": \"20251220-merry-rock-parade\"\n  },\n  {\n    \"title\": \"FM802 ROCK FESTIVAL RADIO CRAZY 2025\",\n    \"start\": \"2025-12-27T18:00:00+09:00\",\n    \"end\": \"2025-12-27T20:00:00+09:00\",\n    \"location\": \"INTEX OSAKA\",\n    \"url\": \"https://radiocrazy.fm/\",\n    \"description\": \"\",\n    \"source_id\": \"20251227-radio-crazy\"\n  },\n  {\n    \"title\": \"COUNTDOWN JAPAN 25/26\",\n    \"start\": \"2025-12-30T18:00:00+09:00\",\n    \"end\": \"2025-12-30T20:00:00+09:00\",\n    \"location\": \"幕張メッセ国際展示場\",\n    \"url\": \"https://jfes.go.link/gdigi\",\n    \"description\": \"\",\n    \"source_id\": \"20251230-countdown-japan\"\n  },\n  {\n    \"title\": \"ねぐせ。対バンツアー「BAND TO THE FUTURE Ⅱ」\",\n    \"start\": \"2026-01-23T19:00:00+09:00\",\n    \"end\": \"2026-01-23T21:00:00+09:00\",\n    \"location\": \"Zepp Haneda\",\n    \"url\": \"\",\n    \"description\": \"開場/開演 18:00 / 19:00\",\n    \"source_id\": \"20260123-neguse\"\n  },\n  {\n    \"title\": \"Original Love Presents Love Jam Vol.9\",\n    \"start\": \"2026-01-25T18:00:00+09:00\",\n    \"end\": \"2026-01-25T20:00:00+09:00\",\n    \"location\": \"Zepp DiverCity (TOKYO)\",\n    \"url\": \"https://info.diskgarage.com/\",\n    \"description\": \"開場/開演 17:00 / 18:00\",\n    \"source_id\": \"20260125-original-love\"\n  },\n  {\n    \"title\": \"ART-SCHOOL TRIBUTE LIVE「Dreams Never End」vol.6\",\n    \"start\": \"2026-03-18T19:00:00+09:00\",\n    \"end\": \"2026-03-18T21:00:00+09:00\",\n    \"location\": \"KT Zepp Yokohama\",\n    \"url\": \"https://www.art-school.net/25th/\",\n    \"description\": \"開場/開演 18:00 / 19:00\",\n    \"source_id\": \"20260318-art-school\"\n  },\n  {\n    \"title\": \"ASIAN KUNG-FU GENERATION 30th Anniversary Special Concert \\\"Thirty Revolutions”\",\n    \"start\": \"2026-04-04T18:00:00+09:00\",\n    \"end\": \"2026-04-04T20:00:00+09:00\",\n    \"location\": \"有明アリーナ\",\n    \"url\": \"https://www.akglive.com/30th\",\n    \"description\": \"開場/開演 17:00 / 18:00\",\n    \"source_id\": \"20260404-asian-kung-fu-generation\"\n  },\n  {\n    \"title\": \"ASIAN KUNG-FU GENERATION 30th Anniversary Special Concert \\\"Thirty Revolutions”\",\n    \"start\": \"2026-04-05T17:00:00+09:00\",\n    \"end\": \"2026-04-05T19:00:00+09:00\",\n    \"location\": \"有明アリーナ\",\n    \"url\": \"https://www.akglive.com/30th\",\n    \"description\": \"開場/開演 16:00 / 17:00\",\n    \"source_id\": \"20260405-asian-kung-fu-generation\"\n  },\n  {\n    \"title\": \"ASIAN KUNG-FU GENERATION 30th Anniversary Special Concert in Jakarta\",\n    \"start\": \"2026-04-18T18:00:00+09:00\",\n    \"end\": \"2026-04-18T20:00:00+09:00\",\n    \"location\": \"インドネシア・ジャカルタ\",\n    \"url\": \"\",\n    \"description\": \"＊Special Guests あり\\n＊詳細は追って発表\",\n    \"source_id\": \"20260418-asian-kung-fu-generation\"\n  }\n]",
+  "parsed_events": [
+    {
+      "source_id": "20251124-jinmiraisai",
+      "title": "尽未来祭 2025",
+      "start": "2025-11-24T18:00:00+09:00",
+      "end": "2025-11-24T20:00:00+09:00",
+      "location": "幕張メッセ国際展示場9-11ホール",
+      "url": "https://jinmiraisai.com/",
+      "description": null
+    },
+    {
+      "source_id": "20251220-merry-rock-parade",
+      "title": "MERRY ROCK PARADE 2025",
+      "start": "2025-12-20T18:00:00+09:00",
+      "end": "2025-12-20T20:00:00+09:00",
+      "location": "ポートメッセなごや",
+      "url": "https://www.merryrockparade.jp/",
+      "description": null
+    },
+    {
+      "source_id": "20251227-radio-crazy",
+      "title": "FM802 ROCK FESTIVAL RADIO CRAZY 2025",
+      "start": "2025-12-27T18:00:00+09:00",
+      "end": "2025-12-27T20:00:00+09:00",
+      "location": "INTEX OSAKA",
+      "url": "https://radiocrazy.fm/",
+      "description": null
+    },
+    {
+      "source_id": "20251230-countdown-japan",
+      "title": "COUNTDOWN JAPAN 25/26",
+      "start": "2025-12-30T18:00:00+09:00",
+      "end": "2025-12-30T20:00:00+09:00",
+      "location": "幕張メッセ国際展示場",
+      "url": "https://jfes.go.link/gdigi",
+      "description": null
+    },
+    {
+      "source_id": "20260123-neguse",
+      "title": "ねぐせ。対バンツアー「BAND TO THE FUTURE Ⅱ」",
+      "start": "2026-01-23T19:00:00+09:00",
+      "end": "2026-01-23T21:00:00+09:00",
+      "location": "Zepp Haneda",
+      "url": "https://www.asiankung-fu.com/s/n80/page/smoj_live?ima=0705",
+      "description": "開場/開演 18:00 / 19:00"
+    },
+    {
+      "source_id": "20260125-original-love",
+      "title": "Original Love Presents Love Jam Vol.9",
+      "start": "2026-01-25T18:00:00+09:00",
+      "end": "2026-01-25T20:00:00+09:00",
+      "location": "Zepp DiverCity (TOKYO)",
+      "url": "https://info.diskgarage.com/",
+      "description": "開場/開演 17:00 / 18:00"
+    },
+    {
+      "source_id": "20260318-art-school",
+      "title": "ART-SCHOOL TRIBUTE LIVE「Dreams Never End」vol.6",
+      "start": "2026-03-18T19:00:00+09:00",
+      "end": "2026-03-18T21:00:00+09:00",
+      "location": "KT Zepp Yokohama",
+      "url": "https://www.art-school.net/25th/",
+      "description": "開場/開演 18:00 / 19:00"
+    },
+    {
+      "source_id": "20260404-asian-kung-fu-generation",
+      "title": "ASIAN KUNG-FU GENERATION 30th Anniversary Special Concert \"Thirty Revolutions”",
+      "start": "2026-04-04T18:00:00+09:00",
+      "end": "2026-04-04T20:00:00+09:00",
+      "location": "有明アリーナ",
+      "url": "https://www.akglive.com/30th",
+      "description": "開場/開演 17:00 / 18:00"
+    },
+    {
+      "source_id": "20260405-asian-kung-fu-generation",
+      "title": "ASIAN KUNG-FU GENERATION 30th Anniversary Special Concert \"Thirty Revolutions”",
+      "start": "2026-04-05T17:00:00+09:00",
+      "end": "2026-04-05T19:00:00+09:00",
+      "location": "有明アリーナ",
+      "url": "https://www.akglive.com/30th",
+      "description": "開場/開演 16:00 / 17:00"
+    },
+    {
+      "source_id": "20260418-asian-kung-fu-generation",
+      "title": "ASIAN KUNG-FU GENERATION 30th Anniversary Special Concert in Jakarta",
+      "start": "2026-04-18T18:00:00+09:00",
+      "end": "2026-04-18T20:00:00+09:00",
+      "location": "インドネシア・ジャカルタ",
+      "url": "https://www.asiankung-fu.com/s/n80/page/smoj_live?ima=0705",
+      "description": "＊Special Guests あり\n＊詳細は追って発表"
+    }
+  ]
+}

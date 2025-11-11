@@ -1,0 +1,17 @@
+{
+  "source_url": "https://www.nba.com/knicks/schedule",
+  "timestamp": "20251111T101435743675Z",
+  "raw_llm_output": "[\n  {\n    \"title\": \"SUPER BEAVER「都会のラクダ」TOUR 2025 ～ ラクダの恩返し ～\",\n    \"start\": \"2025-11-16T18:00:00+09:00\",\n    \"end\": \"2025-11-16T20:00:00+09:00\",\n    \"location\": \"沖縄\",\n    \"url\": \"\",\n    \"description\": \"開場/開演時間、問い合わせ先は後日発表\",\n    \"source_id\": \"20251116-super-beaver-okinawa\"\n  }\n]",
+  "fetch_mode": "static",
+  "parsed_events": [
+    {
+      "source_id": "20251116-super-beaver-okinawa",
+      "title": "SUPER BEAVER「都会のラクダ」TOUR 2025 ～ ラクダの恩返し ～",
+      "start": "2025-11-16T18:00:00+09:00",
+      "end": "2025-11-16T20:00:00+09:00",
+      "location": "沖縄",
+      "url": "https://www.nba.com/knicks/schedule",
+      "description": "開場/開演時間、問い合わせ先は後日発表"
+    }
+  ]
+}

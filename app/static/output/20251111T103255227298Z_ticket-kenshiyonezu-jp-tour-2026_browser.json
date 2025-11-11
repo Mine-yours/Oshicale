@@ -1,0 +1,134 @@
+{
+  "source_url": "https://ticket.kenshiyonezu.jp/tour/2026",
+  "timestamp": "20251111T103255227298Z",
+  "raw_llm_output": "[\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-11-06T18:30:00+09:00\",\n    \"end\": \"2026-11-06T20:30:00+09:00\",\n    \"location\": \"長野ビッグハット\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261106-kenshi-yonezu-nagano\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-11-07T17:00:00+09:00\",\n    \"end\": \"2026-11-07T19:00:00+09:00\",\n    \"location\": \"長野ビッグハット\",\n    \"url\": \"\",\n    \"description\": \"OPEN 15:30\",\n    \"source_id\": \"20261107-kenshi-yonezu-nagano\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-11-11T18:30:00+09:00\",\n    \"end\": \"2026-11-11T20:30:00+09:00\",\n    \"location\": \"K-Arena Yokohama\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261111-kenshi-yonezu-yokohama\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-11-12T18:30:00+09:00\",\n    \"end\": \"2026-11-12T20:30:00+09:00\",\n    \"location\": \"K-Arena Yokohama\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261112-kenshi-yonezu-yokohama\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-11-18T18:30:00+09:00\",\n    \"end\": \"2026-11-18T20:30:00+09:00\",\n    \"location\": \"大阪城ホール\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261118-kenshi-yonezu-osaka\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-11-19T18:30:00+09:00\",\n    \"end\": \"2026-11-19T20:30:00+09:00\",\n    \"location\": \"大阪城ホール\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261119-kenshi-yonezu-osaka\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-11-27T18:30:00+09:00\",\n    \"end\": \"2026-11-27T20:30:00+09:00\",\n    \"location\": \"マリンメッセ福岡A館\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261127-kenshi-yonezu-fukuoka\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-11-28T17:00:00+09:00\",\n    \"end\": \"2026-11-28T19:00:00+09:00\",\n    \"location\": \"マリンメッセ福岡A館\",\n    \"url\": \"\",\n    \"description\": \"OPEN 15:30\",\n    \"source_id\": \"20261128-kenshi-yonezu-fukuoka\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-12-03T18:30:00+09:00\",\n    \"end\": \"2026-12-03T20:30:00+09:00\",\n    \"location\": \"宮城 セキスイハイムスーパーアリーナ\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261203-kenshi-yonezu-miyagi\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-12-04T18:30:00+09:00\",\n    \"end\": \"2026-12-04T20:30:00+09:00\",\n    \"location\": \"宮城 セキスイハイムスーパーアリーナ\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261204-kenshi-yonezu-miyagi\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-12-08T18:30:00+09:00\",\n    \"end\": \"2026-12-08T20:30:00+09:00\",\n    \"location\": \"ポートメッセなごや 第1展示館\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261208-kenshi-yonezu-aichi\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-12-09T18:30:00+09:00\",\n    \"end\": \"2026-12-09T20:30:00+09:00\",\n    \"location\": \"ポートメッセなごや 第1展示館\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261209-kenshi-yonezu-aichi\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-12-16T18:30:00+09:00\",\n    \"end\": \"2026-12-16T20:30:00+09:00\",\n    \"location\": \"K-Arena Yokohama\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261216-kenshi-yonezu-yokohama\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / GHOST\",\n    \"start\": \"2026-12-17T18:30:00+09:00\",\n    \"end\": \"2026-12-17T20:30:00+09:00\",\n    \"location\": \"K-Arena Yokohama\",\n    \"url\": \"\",\n    \"description\": \"OPEN 17:00\",\n    \"source_id\": \"20261217-kenshi-yonezu-yokohama\"\n  }\n]",
+  "fetch_mode": "browser",
+  "parsed_events": [
+    {
+      "source_id": "20261106-kenshi-yonezu-nagano",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-11-06T18:30:00+09:00",
+      "end": "2026-11-06T20:30:00+09:00",
+      "location": "長野ビッグハット",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261107-kenshi-yonezu-nagano",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-11-07T17:00:00+09:00",
+      "end": "2026-11-07T19:00:00+09:00",
+      "location": "長野ビッグハット",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 15:30"
+    },
+    {
+      "source_id": "20261111-kenshi-yonezu-yokohama",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-11-11T18:30:00+09:00",
+      "end": "2026-11-11T20:30:00+09:00",
+      "location": "K-Arena Yokohama",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261112-kenshi-yonezu-yokohama",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-11-12T18:30:00+09:00",
+      "end": "2026-11-12T20:30:00+09:00",
+      "location": "K-Arena Yokohama",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261118-kenshi-yonezu-osaka",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-11-18T18:30:00+09:00",
+      "end": "2026-11-18T20:30:00+09:00",
+      "location": "大阪城ホール",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261119-kenshi-yonezu-osaka",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-11-19T18:30:00+09:00",
+      "end": "2026-11-19T20:30:00+09:00",
+      "location": "大阪城ホール",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261127-kenshi-yonezu-fukuoka",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-11-27T18:30:00+09:00",
+      "end": "2026-11-27T20:30:00+09:00",
+      "location": "マリンメッセ福岡A館",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261128-kenshi-yonezu-fukuoka",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-11-28T17:00:00+09:00",
+      "end": "2026-11-28T19:00:00+09:00",
+      "location": "マリンメッセ福岡A館",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 15:30"
+    },
+    {
+      "source_id": "20261203-kenshi-yonezu-miyagi",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-12-03T18:30:00+09:00",
+      "end": "2026-12-03T20:30:00+09:00",
+      "location": "宮城 セキスイハイムスーパーアリーナ",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261204-kenshi-yonezu-miyagi",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-12-04T18:30:00+09:00",
+      "end": "2026-12-04T20:30:00+09:00",
+      "location": "宮城 セキスイハイムスーパーアリーナ",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261208-kenshi-yonezu-aichi",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-12-08T18:30:00+09:00",
+      "end": "2026-12-08T20:30:00+09:00",
+      "location": "ポートメッセなごや 第1展示館",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261209-kenshi-yonezu-aichi",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-12-09T18:30:00+09:00",
+      "end": "2026-12-09T20:30:00+09:00",
+      "location": "ポートメッセなごや 第1展示館",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261216-kenshi-yonezu-yokohama",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-12-16T18:30:00+09:00",
+      "end": "2026-12-16T20:30:00+09:00",
+      "location": "K-Arena Yokohama",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    },
+    {
+      "source_id": "20261217-kenshi-yonezu-yokohama",
+      "title": "米津玄師 2026 TOUR / GHOST",
+      "start": "2026-12-17T18:30:00+09:00",
+      "end": "2026-12-17T20:30:00+09:00",
+      "location": "K-Arena Yokohama",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": "OPEN 17:00"
+    }
+  ]
+}

@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推し活カレンダー同期</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="page">
+        <header class="page-header">
+            <div class="header-text">
+                <p class="eyebrow">MVP</p>
+                <h1>推し活カレンダー同期</h1>
+                <p class="lead">
+                    指定した情報ソースからイベント予定を取得し、Googleカレンダーへワンクリックで同期します。
+                </p>
+            </div>
+            <div class="header-actions">
+                {% if calendar_connected %}
+                    <a class="primary-button" href="#event-sources">イベントを取得</a>
+                {% else %}
+                    <a class="primary-button" href="{{ url_for('authorize') }}">Googleアカウントと連携</a>
+                {% endif %}
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <ul class="flash-list">
+                    {% for category, message in messages %}
+                        <li class="flash flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <section class="status-card">
+            <h2>連携ステータス</h2>
+            <dl>
+                <div>
+                    <dt>Googleカレンダー</dt>
+                    <dd>
+                        {% if calendar_connected %}
+                            <span class="status success">連携済み</span>
+                        {% else %}
+                            <span class="status danger">未連携</span>
+                        {% endif %}
+                    </dd>
+                </div>
+                <div>
+                    <dt>同期済みイベント数</dt>
+                    <dd>{{ synced_events|length }} 件</dd>
+                </div>
+                <div>
+                    <dt>使用するカレンダーID</dt>
+                    <dd>{{ calendar_id }}</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="events-section" id="event-sources">
+            <h2>イベント取得設定</h2>
+            <form action="{{ url_for('add_event_source') }}" method="post" class="source-form">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="oshi_name">推しの名前</label>
+                        <input type="text" id="oshi_name" name="oshi_name" placeholder="例: Super Beaver" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="source_url">取得したいURL</label>
+                        <input type="url" id="source_url" name="url" placeholder="https://example.com/events" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="secondary-button">取得先を追加</button>
+                    </div>
+                </div>
+            </form>
+
+            {% if event_sources %}
+                <div class="events-table-wrapper">
+                    <table class="events-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">推し</th>
+                                <th scope="col">URL</th>
+                                <th scope="col">モード</th>
+                                <th scope="col">登録日時</th>
+                                <th scope="col">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for source in event_sources %}
+                                <tr>
+                                    <td>{{ source.oshi_name }}</td>
+                                    <td>
+                                        <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">{{ source.url }}</a>
+                                    </td>
+                                    <td>
+                                        {% if source.mode == "api" %}
+                                            <span class="mode-badge mode-api">API</span>
+                                        {% elif source.mode == "browser" %}
+                                            <span class="mode-badge mode-browser">Browser</span>
+                                        {% else %}
+                                            <span class="mode-badge mode-static">Static</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if source.created_at %}
+                                            {{ source.created_at[:16].replace('T', ' ') }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="source-actions">
+                                            <form action="{{ url_for('preview_events', source_id=source.id) }}" method="post">
+                                                <button type="submit" class="secondary-button">通常取得</button>
+                                            </form>
+                                            <form action="{{ url_for('preview_events', source_id=source.id) }}" method="post">
+                                                <input type="hidden" name="use_browser" value="1">
+                                                <button type="submit" class="secondary-button browser-button">ブラウザ取得(β)</button>
+                                            </form>
+                                            <form action="{{ url_for('delete_event_source', source_id=source.id) }}" method="post" onsubmit="return confirm('「{{ source.oshi_name }}」の取得設定を削除します。よろしいですか？');">
+                                                <button type="submit" class="secondary-button danger-button">削除</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="empty-state">まだ取得先が登録されていません。推しの公式サイトやイベントページのURLを登録してください。</p>
+            {% endif %}
+        </section>
+
+        <section class="events-section">
+            <h2>取得済みイベント</h2>
+            {% if preview_source %}
+                <div class="preview-meta">
+                    <p>
+                        対象: <strong>{{ preview_source.oshi_name }}</strong>
+                        {% if preview_source.url %}
+                            / <a href="{{ preview_source.url }}" target="_blank" rel="noopener noreferrer">{{ preview_source.url }}</a>
+                        {% endif %}
+                    </p>
+                    {% if preview_source.fetched_at %}
+                        <p>取得時刻: {{ preview_source.fetched_at[:16].replace('T', ' ') }} (UTC)</p>
+                    {% endif %}
+                    {% if preview_source.mode %}
+                        <p>登録モード: {{ preview_source.mode.upper() }}</p>
+                    {% endif %}
+                    <p>取得モード:
+                        {% if preview_source.use_browser %}
+                            ヘッドレスブラウザ
+                        {% else %}
+                            HTTPリクエスト
+                        {% endif %}
+                    </p>
+                </div>
+            {% endif %}
+
+            {% if preview_events %}
+                <form action="{{ url_for('sync_events') }}" method="post" class="sync-form">
+                    <div class="selection-actions">
+                        <label class="select-all">
+                            <input type="checkbox" data-select-all {% if preview_selected_ids and preview_selected_ids|length == preview_events|length %}checked{% endif %}>
+                            全選択
+                        </label>
+                        <button type="submit" class="primary-button" {% if not calendar_connected %}disabled{% endif %}>
+                            選択したイベントをGoogleカレンダーに同期
+                        </button>
+                        {% if not calendar_connected %}
+                            <span class="helper-text">先にGoogleアカウントと連携してください。</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="events-table-wrapper">
+                        <table class="events-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="checkbox-column">選択</th>
+                                    <th scope="col">開始</th>
+                                    <th scope="col">終了</th>
+                                    <th scope="col">タイトル</th>
+                                    <th scope="col">場所</th>
+                                    <th scope="col">ステータス</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for event in preview_events %}
+                                    <tr>
+                                        <td class="checkbox-column">
+                                            <input
+                                                type="checkbox"
+                                                name="selected_events"
+                                                value="{{ event.source_id }}"
+                                                class="event-checkbox"
+                                                {% if event.source_id in preview_selected_ids %}checked{% endif %}
+                                            >
+                                        </td>
+                                        <td>{{ event.start.astimezone().strftime("%Y-%m-%d %H:%M") }}</td>
+                                        <td>{{ event.end.astimezone().strftime("%Y-%m-%d %H:%M") }}</td>
+                                        <td>
+                                            <div class="event-title">
+                                                <span>{{ event.title }}</span>
+                                                {% if event.url %}
+                                                    <a href="{{ event.url }}" target="_blank" rel="noopener noreferrer">詳細</a>
+                                                {% endif %}
+                                            </div>
+                                            {% if event.description %}
+                                                <p class="event-note">{{ event.description }}</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ event.location or "未定" }}</td>
+                                        <td>
+                                            {% if event.source_id in synced_events %}
+                                                <span class="status success">同期済み</span>
+                                            {% else %}
+                                                <span class="status info">未同期</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            {% else %}
+                <p class="empty-state">保存した取得先から「予定を取得」すると、ここに同期候補が表示されます。</p>
+            {% endif %}
+        </section>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const selectAll = document.querySelector("[data-select-all]");
+            const checkboxes = Array.from(document.querySelectorAll(".event-checkbox"));
+
+            if (!selectAll || checkboxes.length === 0) {
+                return;
+            }
+
+            const syncSelectAllState = () => {
+                const allChecked = checkboxes.every((checkbox) => checkbox.checked);
+                selectAll.checked = allChecked;
+            };
+
+            selectAll.addEventListener("change", () => {
+                checkboxes.forEach((checkbox) => {
+                    checkbox.checked = selectAll.checked;
+                });
+            });
+
+            checkboxes.forEach((checkbox) => {
+                checkbox.addEventListener("change", syncSelectAllState);
+            });
+
+            syncSelectAllState();
+        });
+    </script>
+</body>
+</html>

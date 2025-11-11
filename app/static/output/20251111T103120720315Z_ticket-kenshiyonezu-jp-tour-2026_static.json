@@ -1,0 +1,62 @@
+{
+  "source_url": "https://ticket.kenshiyonezu.jp/tour/2026",
+  "timestamp": "20251111T103120720315Z",
+  "raw_llm_output": "[\n  {\n    \"title\": \"米津玄師 2026 TOUR / 4月18日(土) 東京ドーム\",\n    \"start\": \"2026-04-18T18:00:00+09:00\",\n    \"end\": \"2026-04-18T20:00:00+09:00\",\n    \"location\": \"東京ドーム\",\n    \"url\": \"\",\n    \"description\": \"\",\n    \"source_id\": \"20260418-kenshi-yonezu-tokyo\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / 4月19日(日) 東京ドーム\",\n    \"start\": \"2026-04-19T18:00:00+09:00\",\n    \"end\": \"2026-04-19T20:00:00+09:00\",\n    \"location\": \"東京ドーム\",\n    \"url\": \"\",\n    \"description\": \"\",\n    \"source_id\": \"20260419-kenshi-yonezu-tokyo\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / 4月25日(土) 京セラドーム大阪\",\n    \"start\": \"2026-04-25T18:00:00+09:00\",\n    \"end\": \"2026-04-25T20:00:00+09:00\",\n    \"location\": \"京セラドーム大阪\",\n    \"url\": \"\",\n    \"description\": \"\",\n    \"source_id\": \"20260425-kenshi-yonezu-osaka\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / 4月26日(日) 京セラドーム大阪\",\n    \"start\": \"2026-04-26T18:00:00+09:00\",\n    \"end\": \"2026-04-26T20:00:00+09:00\",\n    \"location\": \"京セラドーム大阪\",\n    \"url\": \"\",\n    \"description\": \"\",\n    \"source_id\": \"20260426-kenshi-yonezu-osaka\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / 5月9日(土) バンテリンドーム ナゴヤ\",\n    \"start\": \"2026-05-09T18:00:00+09:00\",\n    \"end\": \"2026-05-09T20:00:00+09:00\",\n    \"location\": \"バンテリンドーム ナゴヤ\",\n    \"url\": \"\",\n    \"description\": \"\",\n    \"source_id\": \"20260509-kenshi-yonezu-nagoya\"\n  },\n  {\n    \"title\": \"米津玄師 2026 TOUR / 5月10日(日) バンテリンドーム ナゴヤ\",\n    \"start\": \"2026-05-10T18:00:00+09:00\",\n    \"end\": \"2026-05-10T20:00:00+09:00\",\n    \"location\": \"バンテリンドーム ナゴヤ\",\n    \"url\": \"\",\n    \"description\": \"\",\n    \"source_id\": \"20260510-kenshi-yonezu-nagoya\"\n  }\n]",
+  "fetch_mode": "static",
+  "parsed_events": [
+    {
+      "source_id": "20260418-kenshi-yonezu-tokyo",
+      "title": "米津玄師 2026 TOUR / 4月18日(土) 東京ドーム",
+      "start": "2026-04-18T18:00:00+09:00",
+      "end": "2026-04-18T20:00:00+09:00",
+      "location": "東京ドーム",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": null
+    },
+    {
+      "source_id": "20260419-kenshi-yonezu-tokyo",
+      "title": "米津玄師 2026 TOUR / 4月19日(日) 東京ドーム",
+      "start": "2026-04-19T18:00:00+09:00",
+      "end": "2026-04-19T20:00:00+09:00",
+      "location": "東京ドーム",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": null
+    },
+    {
+      "source_id": "20260425-kenshi-yonezu-osaka",
+      "title": "米津玄師 2026 TOUR / 4月25日(土) 京セラドーム大阪",
+      "start": "2026-04-25T18:00:00+09:00",
+      "end": "2026-04-25T20:00:00+09:00",
+      "location": "京セラドーム大阪",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": null
+    },
+    {
+      "source_id": "20260426-kenshi-yonezu-osaka",
+      "title": "米津玄師 2026 TOUR / 4月26日(日) 京セラドーム大阪",
+      "start": "2026-04-26T18:00:00+09:00",
+      "end": "2026-04-26T20:00:00+09:00",
+      "location": "京セラドーム大阪",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": null
+    },
+    {
+      "source_id": "20260509-kenshi-yonezu-nagoya",
+      "title": "米津玄師 2026 TOUR / 5月9日(土) バンテリンドーム ナゴヤ",
+      "start": "2026-05-09T18:00:00+09:00",
+      "end": "2026-05-09T20:00:00+09:00",
+      "location": "バンテリンドーム ナゴヤ",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": null
+    },
+    {
+      "source_id": "20260510-kenshi-yonezu-nagoya",
+      "title": "米津玄師 2026 TOUR / 5月10日(日) バンテリンドーム ナゴヤ",
+      "start": "2026-05-10T18:00:00+09:00",
+      "end": "2026-05-10T20:00:00+09:00",
+      "location": "バンテリンドーム ナゴヤ",
+      "url": "https://ticket.kenshiyonezu.jp/tour/2026",
+      "description": null
+    }
+  ]
+}
