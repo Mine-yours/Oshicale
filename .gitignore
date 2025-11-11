@@ -151,3 +151,8 @@ Thumbs.db
 **/__pycache__/
 **/uploads
 memo.txt
+**/client_secret_*.json
+**/token.json
+**/venv
+**/output
+**/static/output
