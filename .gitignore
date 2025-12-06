@@ -151,8 +151,18 @@ Thumbs.db
 **/__pycache__/
 **/uploads
 memo.txt
-**/client_secret_*.json
-**/token.json
 **/venv
 **/output
 **/static/output
+
+# 機密情報（絶対にコミットしない）
+credentials/
+**/credentials/
+**/client_secret*.json
+**/token.json
+*.json.bak
+
+# 環境変数ファイル（APIキーなどを含む場合）
+.flaskenv
+.env.local
+.env.production

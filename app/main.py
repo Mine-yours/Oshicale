@@ -28,6 +28,7 @@ def _serialize_event(event: Event) -> Dict[str, str]:
     return {
         "source_id": event.source_id,
         "title": event.title,
+        "category": event.category or "",
         "start": event.start.isoformat(),
         "end": event.end.isoformat(),
         "location": event.location or "",
@@ -48,6 +49,7 @@ def _deserialize_event(data: Dict[str, str]) -> Event:
         title=data["title"],
         start=_parse_datetime(data["start"]),
         end=_parse_datetime(data["end"]),
+        category=data.get("category") or None,
         location=data.get("location") or None,
         url=data.get("url") or None,
         description=data.get("description") or None,
@@ -93,6 +95,41 @@ def index():
         synced_events=synced_events,
         calendar_connected=calendar_connected,
         calendar_id=calendar_id,
+    )
+
+
+@app.route("/calendar")
+def calendar_view():
+    import json as json_module
+    
+    preview_data = session.get("preview_events")
+    events: List[Event] = []
+    oshi_name = None
+    
+    if preview_data:
+        events = [_deserialize_event(item) for item in preview_data.get("events", [])]
+        oshi_name = preview_data.get("oshi_name")
+    
+    # FullCalendar用にイベントをJSON形式に変換
+    events_json = json_module.dumps([
+        {
+            "source_id": event.source_id,
+            "title": event.title,
+            "category": event.category or "その他",
+            "start": event.start.isoformat(),
+            "end": event.end.isoformat(),
+            "location": event.location or "",
+            "url": event.url or "",
+            "description": event.description or "",
+        }
+        for event in events
+    ], ensure_ascii=False)
+    
+    return render_template(
+        "calendar.html",
+        events=events,
+        events_json=events_json,
+        oshi_name=oshi_name,
     )
 
 
@@ -194,7 +231,7 @@ def preview_events(source_id: int):
             use_browser = True
 
     try:
-        events = fetch_events(source["url"], use_browser=use_browser)
+        events = fetch_events(source["url"])
     except EventSourceError as exc:
         flash(str(exc), "error")
         return redirect(url_for("index"))

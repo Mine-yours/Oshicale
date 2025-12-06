@@ -85,7 +85,6 @@
                             <tr>
                                 <th scope="col">推し</th>
                                 <th scope="col">URL</th>
-                                <th scope="col">モード</th>
                                 <th scope="col">登録日時</th>
                                 <th scope="col">操作</th>
                             </tr>
@@ -98,15 +97,6 @@
                                         <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">{{ source.url }}</a>
                                     </td>
                                     <td>
-                                        {% if source.mode == "api" %}
-                                            <span class="mode-badge mode-api">API</span>
-                                        {% elif source.mode == "browser" %}
-                                            <span class="mode-badge mode-browser">Browser</span>
-                                        {% else %}
-                                            <span class="mode-badge mode-static">Static</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
                                         {% if source.created_at %}
                                             {{ source.created_at[:16].replace('T', ' ') }}
                                         {% else %}
@@ -116,11 +106,7 @@
                                     <td>
                                         <div class="source-actions">
                                             <form action="{{ url_for('preview_events', source_id=source.id) }}" method="post">
-                                                <button type="submit" class="secondary-button">通常取得</button>
-                                            </form>
-                                            <form action="{{ url_for('preview_events', source_id=source.id) }}" method="post">
-                                                <input type="hidden" name="use_browser" value="1">
-                                                <button type="submit" class="secondary-button browser-button">ブラウザ取得(β)</button>
+                                                <button type="submit" class="secondary-button">予定を取得</button>
                                             </form>
                                             <form action="{{ url_for('delete_event_source', source_id=source.id) }}" method="post" onsubmit="return confirm('「{{ source.oshi_name }}」の取得設定を削除します。よろしいですか？');">
                                                 <button type="submit" class="secondary-button danger-button">削除</button>
@@ -150,16 +136,6 @@
                     {% if preview_source.fetched_at %}
                         <p>取得時刻: {{ preview_source.fetched_at[:16].replace('T', ' ') }} (UTC)</p>
                     {% endif %}
-                    {% if preview_source.mode %}
-                        <p>登録モード: {{ preview_source.mode.upper() }}</p>
-                    {% endif %}
-                    <p>取得モード:
-                        {% if preview_source.use_browser %}
-                            ヘッドレスブラウザ
-                        {% else %}
-                            HTTPリクエスト
-                        {% endif %}
-                    </p>
                 </div>
             {% endif %}
 
@@ -173,6 +149,7 @@
                         <button type="submit" class="primary-button" {% if not calendar_connected %}disabled{% endif %}>
                             選択したイベントをGoogleカレンダーに同期
                         </button>
+                        <a href="{{ url_for('calendar_view') }}" class="secondary-button">📅 カレンダーで見る</a>
                         {% if not calendar_connected %}
                             <span class="helper-text">先にGoogleアカウントと連携してください。</span>
                         {% endif %}
@@ -183,6 +160,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col" class="checkbox-column">選択</th>
+                                    <th scope="col">カテゴリ</th>
                                     <th scope="col">開始</th>
                                     <th scope="col">終了</th>
                                     <th scope="col">タイトル</th>
@@ -201,6 +179,11 @@
                                                 class="event-checkbox"
                                                 {% if event.source_id in preview_selected_ids %}checked{% endif %}
                                             >
+                                        </td>
+                                        <td>
+                                            <span class="category-badge category-{{ event.category or 'その他' }}">
+                                                {{ event.category or "その他" }}
+                                            </span>
                                         </td>
                                         <td>{{ event.start.astimezone().strftime("%Y-%m-%d %H:%M") }}</td>
                                         <td>{{ event.end.astimezone().strftime("%Y-%m-%d %H:%M") }}</td>

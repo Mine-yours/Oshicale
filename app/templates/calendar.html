@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カレンダー | 推し活カレンダー同期</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+    <style>
+        .calendar-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 32px;
+            box-shadow: 0 12px 32px rgba(80, 97, 139, 0.12);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .calendar-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .calendar-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        #calendar {
+            --fc-border-color: var(--border);
+            --fc-button-bg-color: var(--accent);
+            --fc-button-border-color: var(--accent);
+            --fc-button-hover-bg-color: var(--accent-dark);
+            --fc-button-hover-border-color: var(--accent-dark);
+            --fc-button-active-bg-color: var(--accent-dark);
+            --fc-today-bg-color: rgba(92, 104, 255, 0.08);
+        }
+
+        .fc-event {
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+
+        /* カテゴリ別の色 */
+        .fc-event.category-ライブ {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a) !important;
+            border-color: #ee5a5a !important;
+        }
+
+        .fc-event.category-テレビ {
+            background: linear-gradient(135deg, #4facfe, #00c9ff) !important;
+            border-color: #00c9ff !important;
+        }
+
+        .fc-event.category-ラジオ {
+            background: linear-gradient(135deg, #a8e063, #56ab2f) !important;
+            border-color: #56ab2f !important;
+        }
+
+        .fc-event.category-イベント {
+            background: linear-gradient(135deg, #f093fb, #f5576c) !important;
+            border-color: #f5576c !important;
+        }
+
+        .fc-event.category-配信 {
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            border-color: #764ba2 !important;
+        }
+
+        .fc-event.category-リリース {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f) !important;
+            border-color: #fcb69f !important;
+            color: #8b4513 !important;
+        }
+
+        .fc-event.category-その他 {
+            background: rgba(92, 104, 255, 0.7) !important;
+            border-color: var(--accent) !important;
+        }
+
+        /* イベント詳細モーダル */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            flex: 1;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .modal-body dl {
+            margin: 0;
+            display: grid;
+            gap: 12px;
+        }
+
+        .modal-body dt {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .modal-body dd {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="page-header">
+            <div class="header-text">
+                <p class="eyebrow">カレンダー</p>
+                <h1>推し活カレンダー</h1>
+                <p class="lead">
+                    取得したイベントをカレンダー形式で確認できます。
+                </p>
+            </div>
+            <div class="header-actions">
+                <a class="secondary-button" href="{{ url_for('index') }}">← ホームに戻る</a>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <ul class="flash-list">
+                    {% for category, message in messages %}
+                        <li class="flash flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h2>
+                    {% if oshi_name %}
+                        {{ oshi_name }} のスケジュール
+                    {% else %}
+                        スケジュール
+                    {% endif %}
+                </h2>
+                <div class="calendar-actions">
+                    {% if events %}
+                        <span class="helper-text">{{ events|length }}件のイベント</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if events %}
+                <div id="calendar"></div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a);"></div>
+                        <span>ライブ</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #4facfe, #00c9ff);"></div>
+                        <span>テレビ</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #a8e063, #56ab2f);"></div>
+                        <span>ラジオ</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                        <span>イベント</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                        <span>配信</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);"></div>
+                        <span>リリース</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(92, 104, 255, 0.7);"></div>
+                        <span>その他</span>
+                    </div>
+                </div>
+            {% else %}
+                <p class="empty-state">表示するイベントがありません。先にホームページからイベントを取得してください。</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- イベント詳細モーダル -->
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <dl>
+                    <div>
+                        <dt>カテゴリ</dt>
+                        <dd id="modalCategory"></dd>
+                    </div>
+                    <div>
+                        <dt>日時</dt>
+                        <dd id="modalDateTime"></dd>
+                    </div>
+                    <div>
+                        <dt>場所</dt>
+                        <dd id="modalLocation"></dd>
+                    </div>
+                    <div id="modalDescriptionContainer">
+                        <dt>詳細</dt>
+                        <dd id="modalDescription"></dd>
+                    </div>
+                    <div id="modalUrlContainer">
+                        <dt>リンク</dt>
+                        <dd><a id="modalUrl" href="#" target="_blank" rel="noopener noreferrer">詳細ページを開く</a></dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script>
+        const events = {{ events_json|safe }};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            if (!calendarEl) return;
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ja',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,listMonth'
+                },
+                buttonText: {
+                    today: '今日',
+                    month: '月',
+                    week: '週',
+                    list: 'リスト'
+                },
+                events: events.map(event => ({
+                    id: event.source_id,
+                    title: event.title,
+                    start: event.start,
+                    end: event.end,
+                    classNames: ['category-' + (event.category || 'その他')],
+                    extendedProps: {
+                        category: event.category || 'その他',
+                        location: event.location || '',
+                        description: event.description || '',
+                        url: event.url || ''
+                    }
+                })),
+                eventClick: function(info) {
+                    showEventModal(info.event);
+                },
+                eventDidMount: function(info) {
+                    info.el.title = info.event.title;
+                }
+            });
+
+            calendar.render();
+        });
+
+        function showEventModal(event) {
+            document.getElementById('modalTitle').textContent = event.title;
+            document.getElementById('modalCategory').innerHTML = 
+                '<span class="category-badge category-' + event.extendedProps.category + '">' + 
+                event.extendedProps.category + '</span>';
+            
+            const start = new Date(event.start);
+            const end = event.end ? new Date(event.end) : null;
+            let dateStr = start.toLocaleString('ja-JP', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            if (end) {
+                dateStr += ' 〜 ' + end.toLocaleString('ja-JP', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+            document.getElementById('modalDateTime').textContent = dateStr;
+            
+            document.getElementById('modalLocation').textContent = 
+                event.extendedProps.location || '未定';
+            
+            const descContainer = document.getElementById('modalDescriptionContainer');
+            const descEl = document.getElementById('modalDescription');
+            if (event.extendedProps.description) {
+                descContainer.style.display = 'block';
+                descEl.textContent = event.extendedProps.description;
+            } else {
+                descContainer.style.display = 'none';
+            }
+            
+            const urlContainer = document.getElementById('modalUrlContainer');
+            const urlEl = document.getElementById('modalUrl');
+            if (event.extendedProps.url) {
+                urlContainer.style.display = 'block';
+                urlEl.href = event.extendedProps.url;
+            } else {
+                urlContainer.style.display = 'none';
+            }
+            
+            document.getElementById('eventModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('eventModal').classList.remove('active');
+        }
+
+        document.getElementById('eventModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
+

@@ -278,6 +278,53 @@ body {
     color: #7a4c00;
 }
 
+/* カテゴリバッジ */
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.category-ライブ {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+    color: #fff;
+}
+
+.category-テレビ {
+    background: linear-gradient(135deg, #4facfe, #00c9ff);
+    color: #fff;
+}
+
+.category-ラジオ {
+    background: linear-gradient(135deg, #a8e063, #56ab2f);
+    color: #fff;
+}
+
+.category-イベント {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: #fff;
+}
+
+.category-配信 {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+}
+
+.category-リリース {
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    color: #8b4513;
+}
+
+.category-その他 {
+    background: rgba(92, 104, 255, 0.12);
+    color: var(--accent-dark);
+}
+
 .mode-api {
     background: rgba(21, 105, 68, 0.18);
     color: #145a39;
