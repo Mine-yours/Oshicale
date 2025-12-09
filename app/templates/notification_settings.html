@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通知設定 | 推し活カレンダー同期</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                <span class="navbar-logo">📅</span>
+                <span>推しカレ</span>
+            </a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('index') }}" class="nav-link">ホーム</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        <header class="page-header">
+            <h1>通知設定</h1>
+            <p class="lead">新着イベントやリマインダーの通知設定を行えます。</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <ul class="flash-list">
+                    {% for category, message in messages %}
+                        <li class="flash flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <section class="card">
+            <div class="card-header">
+                <h2>通知設定</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-row" style="grid-template-columns: 1fr; gap: 24px;">
+                        <div>
+                            <h3 style="font-size: 16px; margin-bottom: 12px;">新着イベント通知</h3>
+                            <div class="form-group">
+                                <label class="form-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" name="notify_new_events" value="1" {% if settings.notify_new_events %}checked{% endif %}>
+                                    <span>新着イベントを検出したときに通知する</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 style="font-size: 16px; margin-bottom: 12px;">リマインダー通知</h3>
+                            <div class="form-group">
+                                <label class="form-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" name="notify_reminders" value="1" {% if settings.notify_reminders %}checked{% endif %}>
+                                    <span>イベント前日にリマインダーを送信する</span>
+                                </label>
+                            </div>
+                            <div class="form-group" style="margin-top: 12px;">
+                                <label class="form-label" for="reminder_hours">リマインダー送信タイミング</label>
+                                <select class="form-input" id="reminder_hours" name="reminder_hours" style="max-width: 200px;">
+                                    <option value="1" {% if settings.reminder_hours == 1 %}selected{% endif %}>1時間前</option>
+                                    <option value="6" {% if settings.reminder_hours == 6 %}selected{% endif %}>6時間前</option>
+                                    <option value="12" {% if settings.reminder_hours == 12 %}selected{% endif %}>12時間前</option>
+                                    <option value="24" {% if settings.reminder_hours == 24 %}selected{% endif %}>24時間前（1日前）</option>
+                                    <option value="48" {% if settings.reminder_hours == 48 %}selected{% endif %}>48時間前（2日前）</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 style="font-size: 16px; margin-bottom: 12px;">メール通知</h3>
+                            <div class="form-group">
+                                <label class="form-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" name="email_enabled" value="1" {% if settings.email_enabled %}checked{% endif %} id="emailEnabled">
+                                    <span>メール通知を有効にする</span>
+                                </label>
+                            </div>
+                            <div class="form-group" style="margin-top: 12px;" id="emailAddressGroup">
+                                <label class="form-label" for="email_address">メールアドレス</label>
+                                <input type="email" class="form-input" id="email_address" name="email_address" 
+                                       value="{{ settings.email_address or '' }}" 
+                                       placeholder="example@email.com"
+                                       {% if not settings.email_enabled %}disabled{% endif %}>
+                                <p class="helper-text" style="margin-top: 4px;">
+                                    メール通知を使用するには、環境変数でメールサーバー設定が必要です。
+                                </p>
+                                <div style="margin-top: 12px; padding: 12px; background: var(--info-bg); border-radius: var(--radius);">
+                                    <p style="margin: 0 0 8px 0; font-size: 13px; color: var(--info-text);">
+                                        <strong>テストメール送信</strong>
+                                    </p>
+                                    <div style="display: flex; gap: 8px; align-items: flex-end;">
+                                        <div style="flex: 1;">
+                                            <input type="email" class="form-input" id="test_email" 
+                                                   placeholder="テストメールの送信先" 
+                                                   value="{{ settings.email_address or '' }}"
+                                                   style="font-size: 13px;">
+                                        </div>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="sendTestEmail()">テスト送信</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 style="font-size: 16px; margin-bottom: 12px;">カスタム通知メッセージ</h3>
+                            <div class="form-group">
+                                <label class="form-label" for="custom_message_template">メッセージテンプレート</label>
+                                <textarea class="form-input" id="custom_message_template" name="custom_message_template" rows="5" 
+                                          placeholder="例: 新着イベント: {{title}}&#10;日時: {{start}} 〜 {{end}}&#10;場所: {{location}}&#10;&#10;利用可能な変数: {{title}}, {{category}}, {{start}}, {{end}}, {{location}}, {{description}}, {{url}}">{{ settings.custom_message_template or '' }}</textarea>
+                                <p class="helper-text" style="margin-top: 4px;">
+                                    カスタムメッセージを設定すると、デフォルトのメッセージの代わりに使用されます。空欄の場合はデフォルトメッセージを使用します。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 style="font-size: 16px; margin-bottom: 12px;">時間指定通知</h3>
+                            <div class="form-group">
+                                <label class="form-label" for="scheduled_notification_time">通知時刻（HH:MM形式）</label>
+                                <input type="time" class="form-input" id="scheduled_notification_time" name="scheduled_notification_time" 
+                                       value="{{ settings.scheduled_notification_time or '' }}" 
+                                       style="max-width: 200px;">
+                                <p class="helper-text" style="margin-top: 4px;">
+                                    指定した時刻に、今日のイベントを通知します。空欄の場合は時間指定通知を無効にします。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 24px;">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">キャンセル</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('emailEnabled')?.addEventListener('change', function() {
+            const emailInput = document.getElementById('email_address');
+            const emailGroup = document.getElementById('emailAddressGroup');
+            if (this.checked) {
+                emailInput.disabled = false;
+                emailGroup.style.opacity = '1';
+            } else {
+                emailInput.disabled = true;
+                emailGroup.style.opacity = '0.6';
+            }
+        });
+        
+        function sendTestEmail() {
+            const testEmail = document.getElementById('test_email').value.trim();
+            if (!testEmail) {
+                alert('テストメールの送信先を入力してください。');
+                return;
+            }
+            
+            // フォームを作成して送信
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ url_for("notification_settings") }}';
+            
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'test_email';
+            form.appendChild(actionInput);
+            
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'test_email';
+            emailInput.value = testEmail;
+            form.appendChild(emailInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+</html>
+
+
+

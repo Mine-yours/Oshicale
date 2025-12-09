@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全体メモ | 推し活カレンダー同期</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                <span class="navbar-logo">📅</span>
+                <span>推しカレ</span>
+            </a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('index') }}" class="nav-link">ホーム</a>
+                <a href="{{ url_for('calendar_view') }}" class="nav-link">カレンダー</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        <header class="page-header">
+            <h1>全体メモ</h1>
+            <p class="lead">カレンダー全体に関するメモを管理できます。</p>
+        </header>
+
+        <section class="card">
+            <div class="card-header">
+                <h2>新しいメモを追加</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" name="action" value="create">
+                    <div class="form-group">
+                        <label class="form-label" for="memo_text">メモ内容</label>
+                        <textarea class="form-input" id="memo_text" name="memo_text" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">追加</button>
+                </form>
+            </div>
+        </section>
+
+        {% if memos %}
+        <section class="card">
+            <div class="card-header">
+                <h2>メモ一覧</h2>
+            </div>
+            <div class="card-body">
+                {% for memo in memos %}
+                <div class="card" style="margin-bottom: 16px;">
+                    <div class="card-body">
+                        <p style="white-space: pre-wrap;">{{ memo.memo_text }}</p>
+                        <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+                            <span class="helper-text">作成: {{ memo.created_at[:16].replace('T', ' ') }}</span>
+                            {% if memo.updated_at != memo.created_at %}
+                            <span class="helper-text">更新: {{ memo.updated_at[:16].replace('T', ' ') }}</span>
+                            {% endif %}
+                            <form method="post" style="margin-left: auto; display: inline;">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="memo_id" value="{{ memo.id }}">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('このメモを削除しますか？');">削除</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </main>
+</body>
+</html>
+

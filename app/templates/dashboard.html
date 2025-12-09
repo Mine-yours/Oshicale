@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ダッシュボード | 推し活カレンダー同期</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                <span class="navbar-logo">📅</span>
+                <span>推しカレ</span>
+            </a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('index') }}" class="nav-link">ホーム</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link active">ダッシュボード</a>
+                <a href="{{ url_for('calendar_view') }}" class="nav-link">カレンダー</a>
+                <a href="{{ url_for('stats') }}" class="nav-link">統計</a>
+                <a href="{{ url_for('notification_settings') }}" class="nav-link">通知設定</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        <header class="page-header">
+            <h1>ダッシュボード</h1>
+            <p class="lead">今日のイベントと今週のサマリーを確認できます。</p>
+        </header>
+
+        <!-- 今日のイベント -->
+        <section class="card">
+            <div class="card-header">
+                <h2>📅 今日のイベント</h2>
+            </div>
+            <div class="card-body">
+                {% if today_events %}
+                <div class="events-table-wrapper">
+                    <table class="events-table">
+                        <thead>
+                            <tr>
+                                <th>カテゴリ</th>
+                                <th>時間</th>
+                                <th>イベント名</th>
+                                <th>場所</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in today_events %}
+                            <tr>
+                                <td>
+                                    <span class="category-badge category-{{ event.category or 'その他' }}">
+                                        {{ event.category or "その他" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ event.start.astimezone().strftime("%H:%M") }}
+                                    〜 {{ event.end.astimezone().strftime("%H:%M") }}
+                                </td>
+                                <td>{{ event.title }}</td>
+                                <td>{{ event.location or "未定" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-title">今日のイベントはありません</div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- 今週のサマリー -->
+        <section class="card">
+            <div class="card-header">
+                <h2>📊 今週のサマリー</h2>
+            </div>
+            <div class="card-body">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon info">📅</div>
+                        <div class="stat-content">
+                            <div class="stat-label">総イベント数</div>
+                            <div class="stat-value">{{ week_summary.total }} 件</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a);">🎤</div>
+                        <div class="stat-content">
+                            <div class="stat-label">ライブ</div>
+                            <div class="stat-value">{{ week_summary.live }} 件</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00c9ff);">📺</div>
+                        <div class="stat-content">
+                            <div class="stat-label">テレビ</div>
+                            <div class="stat-value">{{ week_summary.tv }} 件</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #a8e063, #56ab2f);">📻</div>
+                        <div class="stat-content">
+                            <div class="stat-label">ラジオ</div>
+                            <div class="stat-value">{{ week_summary.radio }} 件</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">🎉</div>
+                        <div class="stat-content">
+                            <div class="stat-label">イベント</div>
+                            <div class="stat-value">{{ week_summary.event }} 件</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">💻</div>
+                        <div class="stat-content">
+                            <div class="stat-label">配信</div>
+                            <div class="stat-value">{{ week_summary.stream }} 件</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);">💿</div>
+                        <div class="stat-content">
+                            <div class="stat-label">リリース</div>
+                            <div class="stat-value">{{ week_summary.release }} 件</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 重要なイベント（近々開催） -->
+        <section class="card">
+            <div class="card-header">
+                <h2>⭐ 重要なイベント（7日以内）</h2>
+            </div>
+            <div class="card-body">
+                {% if upcoming_events %}
+                <div class="events-table-wrapper">
+                    <table class="events-table">
+                        <thead>
+                            <tr>
+                                <th>カテゴリ</th>
+                                <th>日時</th>
+                                <th>イベント名</th>
+                                <th>場所</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in upcoming_events %}
+                            <tr>
+                                <td>
+                                    <span class="category-badge category-{{ event.category or 'その他' }}">
+                                        {{ event.category or "その他" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ event.start.astimezone().strftime("%m/%d %H:%M") }}
+                                </td>
+                                <td>{{ event.title }}</td>
+                                <td>{{ event.location or "未定" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-title">重要なイベントはありません</div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>
+

@@ -129,20 +129,26 @@ def _store_debug_artifacts(
 
 # --- FireCrawlを使った取得処理（ここが劇的に短くなりました） ---
 def _fetch_markdown_with_firecrawl(source_url: str) -> str:
-    api_key = os.environ.get("FIRECRAWL_API_KEY")
+    api_key = os.environ.get("FIRECRAWL_API_KEYS")
     if not api_key:
-        raise EventSourceError("FIRECRAWL_API_KEY が設定されていません。")
+        raise EventSourceError("FIRECRAWL_API_KEYS が設定されていません。")
     
     try:
         app = FirecrawlApp(api_key=api_key)
-        # scrape 一発で、動的サイトの待機も不要タグの除去も完了します
-        scrape_result = app.scrape(source_url, formats=['markdown'])
+        # scrape_url を使用してMarkdown形式で取得
+        scrape_result = app.scrape_url(source_url, params={'formats': ['markdown']})
         
-        # 結果はオブジェクトなので属性アクセス
-        if not scrape_result.markdown:
+        # 結果は辞書形式で返される可能性があるので、両方の形式に対応
+        if isinstance(scrape_result, dict):
+            markdown = scrape_result.get('markdown') or scrape_result.get('data', {}).get('markdown')
+        else:
+            # オブジェクト形式の場合
+            markdown = getattr(scrape_result, 'markdown', None) or getattr(scrape_result, 'data', None)
+        
+        if not markdown:
             raise EventSourceError("FireCrawlからMarkdownを取得できませんでした。")
             
-        return scrape_result.markdown
+        return markdown
 
     except Exception as exc:
         raise EventSourceError(f"FireCrawlでの取得に失敗しました: {exc}") from exc

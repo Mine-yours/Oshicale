@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,24 +7,38 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <main class="page">
-        <header class="page-header">
-            <div class="header-text">
-                <p class="eyebrow">MVP</p>
-                <h1>推し活カレンダー同期</h1>
-                <p class="lead">
-                    指定した情報ソースからイベント予定を取得し、Googleカレンダーへワンクリックで同期します。
-                </p>
-            </div>
-            <div class="header-actions">
+    <!-- ナビゲーション -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                <span class="navbar-logo">📅</span>
+                <span>推しカレ</span>
+            </a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('index') }}" class="nav-link active">ホーム</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link">ダッシュボード</a>
+                <a href="{{ url_for('calendar_view') }}" class="nav-link">カレンダー</a>
+                <a href="{{ url_for('stats') }}" class="nav-link">統計</a>
+                <a href="{{ url_for('notification_settings') }}" class="nav-link">通知設定</a>
                 {% if calendar_connected %}
-                    <a class="primary-button" href="#event-sources">イベントを取得</a>
+                    <span class="status success" style="margin-left: 8px;">連携済み</span>
                 {% else %}
-                    <a class="primary-button" href="{{ url_for('authorize') }}">Googleアカウントと連携</a>
+                    <a href="{{ url_for('authorize') }}" class="btn btn-primary btn-sm" style="margin-left: 8px;">Google連携</a>
                 {% endif %}
             </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        <!-- ページヘッダー -->
+        <header class="page-header">
+            <h1>推し活カレンダー同期</h1>
+            <p class="lead">
+                推しの公式サイトからイベント予定を取得し、カレンダーに同期します。
+            </p>
         </header>
 
+        <!-- フラッシュメッセージ -->
         {% with messages = get_flashed_messages(with_categories=True) %}
             {% if messages %}
                 <ul class="flash-list">
@@ -36,80 +49,126 @@
             {% endif %}
         {% endwith %}
 
-        <section class="status-card">
-            <h2>連携ステータス</h2>
-            <dl>
-                <div>
-                    <dt>Googleカレンダー</dt>
-                    <dd>
-                        {% if calendar_connected %}
-                            <span class="status success">連携済み</span>
-                        {% else %}
-                            <span class="status danger">未連携</span>
-                        {% endif %}
-                    </dd>
+        <!-- ダッシュボード -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-icon {% if calendar_connected %}success{% else %}warning{% endif %}">
+                    {% if calendar_connected %}✓{% else %}!{% endif %}
                 </div>
-                <div>
-                    <dt>同期済みイベント数</dt>
-                    <dd>{{ synced_events|length }} 件</dd>
+                <div class="stat-content">
+                    <div class="stat-label">Googleカレンダー</div>
+                    <div class="stat-value {% if calendar_connected %}success{% else %}danger{% endif %}">
+                        {% if calendar_connected %}連携済み{% else %}未連携{% endif %}
+                    </div>
                 </div>
-                <div>
-                    <dt>使用するカレンダーID</dt>
-                    <dd>{{ calendar_id }}</dd>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon info">📊</div>
+                <div class="stat-content">
+                    <div class="stat-label">同期済みイベント</div>
+                    <div class="stat-value">{{ synced_events|length }} 件</div>
                 </div>
-            </dl>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon info">📁</div>
+                <div class="stat-content">
+                    <div class="stat-label">登録済み推し</div>
+                    <div class="stat-value">{{ event_sources|length }} 件</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 推し登録セクション -->
+        <section class="card" id="event-sources">
+            <div class="card-header">
+                <h2>
+                    <span class="card-header-icon">⭐</span>
+                    推しを登録
+                </h2>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('add_event_source') }}" method="post">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="oshi_name">推しの名前</label>
+                            <input type="text" class="form-input" id="oshi_name" name="oshi_name" placeholder="例: Mrs. GREEN APPLE" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="source_url">スケジュールページのURL</label>
+                            <input type="url" class="form-input" id="source_url" name="url" placeholder="https://example.com/schedule" required>
+                    </div>
+                        <div class="form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary">登録する</button>
+                    </div>
+                    </div>
+                </form>
+                </div>
         </section>
 
-        <section class="events-section" id="event-sources">
-            <h2>イベント取得設定</h2>
-            <form action="{{ url_for('add_event_source') }}" method="post" class="source-form">
-                <div class="form-grid">
-                    <div class="form-field">
-                        <label for="oshi_name">推しの名前</label>
-                        <input type="text" id="oshi_name" name="oshi_name" placeholder="例: Super Beaver" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="source_url">取得したいURL</label>
-                        <input type="url" id="source_url" name="url" placeholder="https://example.com/events" required>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="secondary-button">取得先を追加</button>
-                    </div>
-                </div>
-            </form>
-
+        <!-- 登録済み推し一覧 -->
             {% if event_sources %}
-                <div class="events-table-wrapper">
-                    <table class="events-table">
+        <section class="card">
+            <div class="card-header">
+                <h2>
+                    <span class="card-header-icon">📋</span>
+                    登録済みの推し
+                </h2>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div class="table-wrapper" style="margin: 0; padding: 0;">
+                    <table class="table">
                         <thead>
                             <tr>
-                                <th scope="col">推し</th>
-                                <th scope="col">URL</th>
-                                <th scope="col">登録日時</th>
-                                <th scope="col">操作</th>
+                                <th>推しの名前</th>
+                                <th>URL</th>
+                                <th>登録日</th>
+                                <th>定期取得</th>
+                                <th style="width: 200px;">操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for source in event_sources %}
                                 <tr>
-                                    <td>{{ source.oshi_name }}</td>
-                                    <td>
-                                        <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">{{ source.url }}</a>
+                                <td>
+                                    <strong>{{ source.oshi_name }}</strong>
                                     </td>
                                     <td>
+                                    <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer" class="text-truncate" style="max-width: 300px; display: inline-block;">
+                                        {{ source.url }}
+                                    </a>
+                                    </td>
+                                <td class="text-muted">
                                         {% if source.created_at %}
-                                            {{ source.created_at[:16].replace('T', ' ') }}
+                                        {{ source.created_at[:10] }}
                                         {% else %}
                                             -
                                         {% endif %}
                                     </td>
+                                <td>
+                                    {% set interval = source.get('auto_fetch_interval', 1440) %}
+                                    {% set enabled = source.get('enabled', True) %}
+                                    {% if interval > 0 and enabled %}
+                                        {% if interval < 60 %}
+                                            {{ interval }}分
+                                        {% elif interval < 1440 %}
+                                            {{ (interval // 60) }}時間
+                                        {% else %}
+                                            {{ (interval // 1440) }}日
+                                        {% endif %}
+                                        <span class="status success" style="font-size: 11px; margin-left: 4px;">ON</span>
+                                    {% else %}
+                                        <span class="status danger" style="font-size: 11px;">OFF</span>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <div class="source-actions">
-                                            <form action="{{ url_for('preview_events', source_id=source.id) }}" method="post">
-                                                <button type="submit" class="secondary-button">予定を取得</button>
+                                        <form action="{{ url_for('preview_events', source_id=source.id) }}" method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-primary btn-sm">予定を取得</button>
                                             </form>
-                                            <form action="{{ url_for('delete_event_source', source_id=source.id) }}" method="post" onsubmit="return confirm('「{{ source.oshi_name }}」の取得設定を削除します。よろしいですか？');">
-                                                <button type="submit" class="secondary-button danger-button">削除</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="showAutoFetchModal({{ source.id }}, '{{ source.oshi_name }}', {{ interval }}, {{ 1 if enabled else 0 }})">設定</button>
+                                        <form action="{{ url_for('delete_event_source', source_id=source.id) }}" method="post" style="display: inline;" onsubmit="return confirm('「{{ source.oshi_name }}」を削除しますか？');">
+                                            <button type="submit" class="btn btn-danger btn-sm">削除</button>
                                             </form>
                                         </div>
                                     </td>
@@ -118,40 +177,94 @@
                         </tbody>
                     </table>
                 </div>
-            {% else %}
-                <p class="empty-state">まだ取得先が登録されていません。推しの公式サイトやイベントページのURLを登録してください。</p>
-            {% endif %}
+            </div>
         </section>
+        {% endif %}
 
-        <section class="events-section">
-            <h2>取得済みイベント</h2>
+        <!-- 取得済みイベント -->
+        <section class="card">
+            <div class="card-header">
+                <h2>
+                    <span class="card-header-icon">📆</span>
+                    取得済みイベント
+                    {% if preview_events %}
+                        <span class="status info" style="font-size: 12px; margin-left: 8px;">{{ preview_events|length }}件</span>
+                    {% endif %}
+                </h2>
+                {% if preview_events %}
+                <a href="{{ url_for('calendar_view') }}" class="btn btn-secondary btn-sm">📅 カレンダーで見る</a>
+                {% endif %}
+            </div>
+            <div class="card-body">
             {% if preview_source %}
                 <div class="preview-meta">
                     <p>
-                        対象: <strong>{{ preview_source.oshi_name }}</strong>
+                        <strong>{{ preview_source.oshi_name }}</strong> のスケジュール
                         {% if preview_source.url %}
-                            / <a href="{{ preview_source.url }}" target="_blank" rel="noopener noreferrer">{{ preview_source.url }}</a>
+                            — <a href="{{ preview_source.url }}" target="_blank" rel="noopener noreferrer">元ページを開く</a>
                         {% endif %}
                     </p>
                     {% if preview_source.fetched_at %}
-                        <p>取得時刻: {{ preview_source.fetched_at[:16].replace('T', ' ') }} (UTC)</p>
+                    <p class="text-muted" style="font-size: 13px;">取得時刻: {{ preview_source.fetched_at[:16].replace('T', ' ') }} UTC</p>
                     {% endif %}
                 </div>
             {% endif %}
 
             {% if preview_events %}
-                <form action="{{ url_for('sync_events') }}" method="post" class="sync-form">
+                <!-- フィルタリング・検索UI -->
+                <div class="filter-section" style="margin-bottom: 20px; padding: 16px; background: var(--bg); border-radius: var(--radius);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="search-input">🔍 検索</label>
+                            <input type="text" class="form-input" id="search-input" placeholder="タイトル、場所、説明で検索...">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="category-filter">📂 カテゴリ</label>
+                            <select class="form-input" id="category-filter">
+                                <option value="">すべて</option>
+                                <option value="ライブ">ライブ</option>
+                                <option value="テレビ">テレビ</option>
+                                <option value="ラジオ">ラジオ</option>
+                                <option value="イベント">イベント</option>
+                                <option value="配信">配信</option>
+                                <option value="リリース">リリース</option>
+                                <option value="その他">その他</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="date-from">📅 開始日</label>
+                            <input type="date" class="form-input" id="date-from">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="date-to">📅 終了日</label>
+                            <input type="date" class="form-input" id="date-to">
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-secondary btn-sm" id="clear-filters">フィルタをクリア</button>
+                        <span class="helper-text" id="filter-result-count"></span>
+                    </div>
+                </div>
+
                     <div class="selection-actions">
                         <label class="select-all">
                             <input type="checkbox" data-select-all {% if preview_selected_ids and preview_selected_ids|length == preview_events|length %}checked{% endif %}>
-                            全選択
+                            すべて選択
                         </label>
-                        <button type="submit" class="primary-button" {% if not calendar_connected %}disabled{% endif %}>
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <form action="{{ url_for('save_to_app_calendar') }}" method="post" style="margin: 0;">
+                                <button type="submit" class="btn btn-secondary">
+                                    選択したイベントをアプリ上のカレンダーに保存
+                                </button>
+                            </form>
+                            <form action="{{ url_for('sync_events') }}" method="post" style="margin: 0;">
+                                <button type="submit" class="btn btn-primary" {% if not calendar_connected %}disabled{% endif %}>
                             選択したイベントをGoogleカレンダーに同期
                         </button>
-                        <a href="{{ url_for('calendar_view') }}" class="secondary-button">📅 カレンダーで見る</a>
+                            </form>
+                        </div>
                         {% if not calendar_connected %}
-                            <span class="helper-text">先にGoogleアカウントと連携してください。</span>
+                        <span class="helper-text">※ Googleカレンダーに同期する場合は、先にGoogleアカウントと連携してください</span>
                         {% endif %}
                     </div>
 
@@ -159,52 +272,61 @@
                         <table class="events-table">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="checkbox-column">選択</th>
-                                    <th scope="col">カテゴリ</th>
-                                    <th scope="col">開始</th>
-                                    <th scope="col">終了</th>
-                                    <th scope="col">タイトル</th>
-                                    <th scope="col">場所</th>
-                                    <th scope="col">ステータス</th>
+                                    <th class="checkbox-column">選択</th>
+                                    <th>カテゴリ</th>
+                                    <th>日時</th>
+                                    <th>イベント名</th>
+                                    <th>場所</th>
+                                    <th>状態</th>
+                                    <th style="width: 100px;">操作</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="events-tbody">
                                 {% for event in preview_events %}
-                                    <tr>
+                                <tr class="event-row" 
+                                    data-category="{{ event.category or 'その他' }}"
+                                    data-title="{{ event.title|lower }}"
+                                    data-location="{{ (event.location or '')|lower }}"
+                                    data-description="{{ (event.description or '')|lower }}"
+                                    data-start-date="{{ event.start.astimezone().strftime('%Y-%m-%d') }}"
+                                    data-end-date="{{ event.end.astimezone().strftime('%Y-%m-%d') }}">
                                         <td class="checkbox-column">
-                                            <input
-                                                type="checkbox"
-                                                name="selected_events"
-                                                value="{{ event.source_id }}"
-                                                class="event-checkbox"
-                                                {% if event.source_id in preview_selected_ids %}checked{% endif %}
-                                            >
+                                        <input type="checkbox" name="selected_events" value="{{ event.source_id }}" class="event-checkbox" {% if event.source_id in preview_selected_ids %}checked{% endif %}>
+                                    </td>
+                                    <td>
+                                        <span class="category-badge category-{{ event.category or 'その他' }}">
+                                            {{ event.category or "その他" }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style="white-space: nowrap;">
+                                            {{ event.start.astimezone().strftime("%m/%d %H:%M") }}
+                                        </div>
+                                        <div class="text-muted" style="font-size: 12px;">
+                                            〜 {{ event.end.astimezone().strftime("%H:%M") }}
+                                        </div>
                                         </td>
-                                        <td>
-                                            <span class="category-badge category-{{ event.category or 'その他' }}">
-                                                {{ event.category or "その他" }}
-                                            </span>
-                                        </td>
-                                        <td>{{ event.start.astimezone().strftime("%Y-%m-%d %H:%M") }}</td>
-                                        <td>{{ event.end.astimezone().strftime("%Y-%m-%d %H:%M") }}</td>
                                         <td>
                                             <div class="event-title">
                                                 <span>{{ event.title }}</span>
                                                 {% if event.url %}
-                                                    <a href="{{ event.url }}" target="_blank" rel="noopener noreferrer">詳細</a>
+                                            <a href="{{ event.url }}" target="_blank" rel="noopener noreferrer">🔗</a>
                                                 {% endif %}
                                             </div>
                                             {% if event.description %}
-                                                <p class="event-note">{{ event.description }}</p>
+                                        <p class="event-note">{{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}</p>
                                             {% endif %}
                                         </td>
-                                        <td>{{ event.location or "未定" }}</td>
+                                    <td>{{ event.location or "—" }}</td>
                                         <td>
                                             {% if event.source_id in synced_events %}
                                                 <span class="status success">同期済み</span>
                                             {% else %}
                                                 <span class="status info">未同期</span>
                                             {% endif %}
+                                        </td>
+                                    <td>
+                                        <a href="{{ url_for('edit_event', event_id=event.source_id) }}" class="btn btn-secondary btn-sm">編集</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -213,36 +335,443 @@
                     </div>
                 </form>
             {% else %}
-                <p class="empty-state">保存した取得先から「予定を取得」すると、ここに同期候補が表示されます。</p>
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-title">イベントがありません</div>
+                    <p class="empty-state-text">
+                        {% if event_sources %}
+                            上の一覧から「予定を取得」をクリックして、イベントを取得してください。
+                        {% else %}
+                            まずは推しを登録して、スケジュールを取得しましょう。
+                        {% endif %}
+                    </p>
+                </div>
             {% endif %}
+            </div>
         </section>
     </main>
+
     <script>
+        // ブラウザ通知の初期化
+        let notificationPermission = Notification.permission;
+        
+        async function requestNotificationPermission() {
+            if (Notification.permission === 'default') {
+                notificationPermission = await Notification.requestPermission();
+            }
+            return notificationPermission === 'granted';
+        }
+        
+        async function showBrowserNotification(title, body, icon = null) {
+            if (Notification.permission !== 'granted') {
+                const granted = await requestNotificationPermission();
+                if (!granted) {
+                    return;
+                }
+            }
+            
+            const notification = new Notification(title, {
+                body: body,
+                icon: icon || '/static/images/icon.png',
+                badge: '/static/images/badge.png',
+                tag: 'oshicale-notification',
+            });
+            
+            notification.onclick = () => {
+                window.focus();
+                notification.close();
+            };
+            
+            setTimeout(() => notification.close(), 5000);
+        }
+        
+        // 通知をポーリングでチェック
+        let lastNotificationCheck = null;
+        async function checkNewNotifications() {
+            try {
+                const response = await fetch('/api/notifications?unread_only=true');
+                const data = await response.json();
+                
+                if (data.notifications && data.notifications.length > 0) {
+                    // 新しい通知のみを表示
+                    const newNotifications = lastNotificationCheck 
+                        ? data.notifications.filter(n => new Date(n.sent_at) > lastNotificationCheck)
+                        : data.notifications;
+                    
+                    for (const notification of newNotifications) {
+                        if (notification.type === 'new_event') {
+                            await showBrowserNotification(
+                                '新着イベント',
+                                '新しいイベントが検出されました。',
+                            );
+                        } else if (notification.type === 'reminder') {
+                            await showBrowserNotification(
+                                'イベントリマインダー',
+                                'イベントが近づいています。',
+                            );
+                        }
+                        
+                        // 既読にする
+                        if (notification.id) {
+                            await fetch(`/api/notifications/${notification.id}/read`, { method: 'POST' });
+                        }
+                    }
+                    
+                    lastNotificationCheck = new Date();
+                }
+            } catch (error) {
+                console.error('通知チェックエラー:', error);
+            }
+        }
+        
+        // ページ読み込み時に通知許可をリクエスト
+        if ('Notification' in window) {
+            requestNotificationPermission();
+            
+            // 30秒ごとに通知をチェック
+            setInterval(checkNewNotifications, 30000);
+            checkNewNotifications();
+        }
+        
         document.addEventListener("DOMContentLoaded", () => {
+            // フォーム送信時に選択されたチェックボックスの値を追加
+            const forms = document.querySelectorAll('form[action*="save-to-app-calendar"], form[action*="sync"]');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const selectedCheckboxes = Array.from(document.querySelectorAll('.event-checkbox:checked'));
+                    if (selectedCheckboxes.length === 0) {
+                        e.preventDefault();
+                        alert('保存するイベントを選択してください。');
+                        return false;
+                    }
+                    
+                    // 既存のhidden inputを削除
+                    const existingInputs = form.querySelectorAll('input[name="selected_events"]');
+                    existingInputs.forEach(input => input.remove());
+                    
+                    // 選択されたチェックボックスの値をhidden inputとして追加
+                    selectedCheckboxes.forEach(checkbox => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'selected_events';
+                        input.value = checkbox.value;
+                        form.appendChild(input);
+                    });
+                });
+            });
+            
+            // 全選択機能
             const selectAll = document.querySelector("[data-select-all]");
             const checkboxes = Array.from(document.querySelectorAll(".event-checkbox"));
 
-            if (!selectAll || checkboxes.length === 0) {
-                return;
-            }
-
+            if (selectAll && checkboxes.length > 0) {
             const syncSelectAllState = () => {
-                const allChecked = checkboxes.every((checkbox) => checkbox.checked);
-                selectAll.checked = allChecked;
+                    const visibleCheckboxes = Array.from(document.querySelectorAll(".event-checkbox:not([style*='display: none'])"));
+                    selectAll.checked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
             };
 
             selectAll.addEventListener("change", () => {
-                checkboxes.forEach((checkbox) => {
-                    checkbox.checked = selectAll.checked;
+                    const visibleCheckboxes = Array.from(document.querySelectorAll(".event-checkbox:not([style*='display: none'])"));
+                    visibleCheckboxes.forEach(cb => cb.checked = selectAll.checked);
                 });
-            });
 
-            checkboxes.forEach((checkbox) => {
-                checkbox.addEventListener("change", syncSelectAllState);
-            });
+                checkboxes.forEach(cb => cb.addEventListener("change", syncSelectAllState));
+                syncSelectAllState();
+            }
 
-            syncSelectAllState();
+            // フィルタリング機能
+            const searchInput = document.getElementById("search-input");
+            const categoryFilter = document.getElementById("category-filter");
+            const dateFrom = document.getElementById("date-from");
+            const dateTo = document.getElementById("date-to");
+            const clearFilters = document.getElementById("clear-filters");
+            const filterResultCount = document.getElementById("filter-result-count");
+            const eventRows = Array.from(document.querySelectorAll(".event-row"));
+
+            if (!searchInput || eventRows.length === 0) return;
+
+            const applyFilters = () => {
+                const searchTerm = (searchInput.value || "").toLowerCase().trim();
+                const category = categoryFilter.value || "";
+                const fromDate = dateFrom.value || "";
+                const toDate = dateTo.value || "";
+
+                let visibleCount = 0;
+
+                eventRows.forEach(row => {
+                    const rowCategory = row.dataset.category || "";
+                    const rowTitle = row.dataset.title || "";
+                    const rowLocation = row.dataset.location || "";
+                    const rowDescription = row.dataset.description || "";
+                    const rowStartDate = row.dataset.startDate || "";
+                    const rowEndDate = row.dataset.endDate || "";
+
+                    // 検索キーワード
+                    let matchesSearch = true;
+                    if (searchTerm) {
+                        matchesSearch = rowTitle.includes(searchTerm) || 
+                                       rowLocation.includes(searchTerm) || 
+                                       rowDescription.includes(searchTerm);
+                    }
+
+                    // カテゴリ
+                    let matchesCategory = true;
+                    if (category) {
+                        matchesCategory = rowCategory === category;
+                    }
+
+                    // 日付範囲
+                    let matchesDate = true;
+                    if (fromDate || toDate) {
+                        if (fromDate && rowEndDate < fromDate) {
+                            matchesDate = false;
+                        }
+                        if (toDate && rowStartDate > toDate) {
+                            matchesDate = false;
+                        }
+                    }
+
+                    const shouldShow = matchesSearch && matchesCategory && matchesDate;
+                    row.style.display = shouldShow ? "" : "none";
+                    if (shouldShow) visibleCount++;
+                });
+
+                // 結果数を表示
+                if (filterResultCount) {
+                    const totalCount = eventRows.length;
+                    if (visibleCount === totalCount) {
+                        filterResultCount.textContent = `全${totalCount}件表示中`;
+                    } else {
+                        filterResultCount.textContent = `${visibleCount}件 / 全${totalCount}件`;
+                    }
+                }
+
+                // 全選択チェックボックスの状態を更新
+                if (selectAll) {
+                    const visibleCheckboxes = Array.from(document.querySelectorAll(".event-checkbox:not([style*='display: none'])"));
+                    selectAll.checked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+                }
+            };
+
+            // イベントリスナー
+            searchInput.addEventListener("input", applyFilters);
+            categoryFilter.addEventListener("change", applyFilters);
+            dateFrom.addEventListener("change", applyFilters);
+            dateTo.addEventListener("change", applyFilters);
+
+            if (clearFilters) {
+                clearFilters.addEventListener("click", () => {
+                    searchInput.value = "";
+                    categoryFilter.value = "";
+                    dateFrom.value = "";
+                    dateTo.value = "";
+                    applyFilters();
+                });
+            }
+
+            // 初期表示
+            applyFilters();
         });
+
+        // 定期取得設定モーダル
+        function showAutoFetchModal(sourceId, oshiName, currentInterval, enabled) {
+            const modal = document.getElementById('autoFetchModal');
+            if (!modal) {
+                console.error('autoFetchModalが見つかりません');
+                return;
+            }
+            const form = document.getElementById('autoFetchForm');
+            const oshiNameEl = document.getElementById('autoFetchOshiName');
+            const intervalInput = document.getElementById('autoFetchInterval');
+            const enabledCheckbox = document.getElementById('autoFetchEnabled');
+            const intervalType = document.getElementById('autoFetchIntervalType');
+            
+            oshiNameEl.textContent = oshiName;
+            form.action = `/sources/${sourceId}/auto-fetch`;
+            
+            // モーダルを表示
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            
+            // 現在の設定を反映
+            enabledCheckbox.checked = enabled === 1;
+            
+            if (currentInterval > 0) {
+                if (currentInterval < 60) {
+                    intervalInput.value = currentInterval;
+                    intervalType.value = 'minutes';
+                } else if (currentInterval < 1440) {
+                    intervalInput.value = currentInterval / 60;
+                    intervalType.value = 'hours';
+                } else {
+                    intervalInput.value = currentInterval / 1440;
+                    intervalType.value = 'days';
+                }
+            } else {
+                intervalInput.value = 24;
+                intervalType.value = 'hours';
+            }
+            
+            updateIntervalDisplay();
+            // モーダルを表示
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+        }
+
+        function closeAutoFetchModal() {
+            const modal = document.getElementById('autoFetchModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.style.display = 'none';
+            }
+        }
+
+        function updateIntervalDisplay() {
+            const intervalInput = document.getElementById('autoFetchInterval');
+            const intervalType = document.getElementById('autoFetchIntervalType');
+            const display = document.getElementById('intervalDisplay');
+            
+            const value = parseInt(intervalInput.value) || 0;
+            const type = intervalType.value;
+            
+            let minutes = 0;
+            if (type === 'minutes') {
+                minutes = value;
+            } else if (type === 'hours') {
+                minutes = value * 60;
+            } else if (type === 'days') {
+                minutes = value * 1440;
+            }
+            
+            // フォームに実際の分数を設定
+            const hiddenInput = document.getElementById('autoFetchIntervalMinutes');
+            if (hiddenInput) {
+                hiddenInput.value = minutes;
+            }
+            
+            if (display) {
+                if (minutes < 60) {
+                    display.textContent = `${minutes}分ごと`;
+                } else if (minutes < 1440) {
+                    display.textContent = `${minutes / 60}時間ごと`;
+                } else {
+                    display.textContent = `${minutes / 1440}日ごと`;
+                }
+            }
+        }
+
+        document.getElementById('autoFetchInterval')?.addEventListener('input', updateIntervalDisplay);
+        document.getElementById('autoFetchIntervalType')?.addEventListener('change', updateIntervalDisplay);
     </script>
+
+    <!-- 定期取得設定モーダル -->
+    <div class="modal-overlay" id="autoFetchModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>定期取得設定</h3>
+                <button class="modal-close" onclick="closeAutoFetchModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong id="autoFetchOshiName"></strong> の定期取得を設定します。</p>
+                <form id="autoFetchForm" method="post" style="margin-top: 20px;">
+                    <input type="hidden" id="autoFetchIntervalMinutes" name="interval_minutes" value="1440">
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label class="form-label">
+                            <input type="checkbox" id="autoFetchEnabled" name="enabled" value="1" checked>
+                            定期取得を有効にする
+                        </label>
+                    </div>
+                    <div class="form-row" style="grid-template-columns: 2fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="autoFetchInterval">取得間隔</label>
+                            <input type="number" class="form-input" id="autoFetchInterval" min="1" value="24">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="autoFetchIntervalType">単位</label>
+                            <select class="form-input" id="autoFetchIntervalType">
+                                <option value="minutes">分</option>
+                                <option value="hours" selected>時間</option>
+                                <option value="days">日</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="helper-text" style="margin-top: 8px;">
+                        設定間隔: <span id="intervalDisplay">24時間ごと</span>
+                        <br>(1時間〜1週間の範囲で設定できます)
+                    </p>
+                    <div class="form-actions" style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeAutoFetchModal()">キャンセル</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .modal-close {
+            background: var(--bg);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+    </style>
 </body>
 </html>

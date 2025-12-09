@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共有イベント | 推し活カレンダー同期</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                <span class="navbar-logo">📅</span>
+                <span>推しカレ</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="page">
+        <header class="page-header">
+            <h1>共有イベント</h1>
+        </header>
+
+        <section class="card">
+            <div class="card-header">
+                <h2>{{ event.title }}</h2>
+            </div>
+            <div class="card-body">
+                <dl>
+                    <div>
+                        <dt>カテゴリ</dt>
+                        <dd>
+                            <span class="category-badge category-{{ event.category or 'その他' }}">
+                                {{ event.category or "その他" }}
+                            </span>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>日時</dt>
+                        <dd>
+                            {{ event.start.astimezone().strftime("%Y年%m月%d日 %H:%M") }}
+                            〜 {{ event.end.astimezone().strftime("%H:%M") }}
+                        </dd>
+                    </div>
+                    {% if event.location %}
+                    <div>
+                        <dt>場所</dt>
+                        <dd>{{ event.location }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if event.description %}
+                    <div>
+                        <dt>詳細</dt>
+                        <dd>{{ event.description }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if event.url %}
+                    <div>
+                        <dt>リンク</dt>
+                        <dd><a href="{{ event.url }}" target="_blank" rel="noopener noreferrer">詳細ページを開く →</a></dd>
+                    </div>
+                    {% endif %}
+                </dl>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
+

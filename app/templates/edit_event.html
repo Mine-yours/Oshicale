@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>イベント編集 | 推し活カレンダー同期</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                <span class="navbar-logo">📅</span>
+                <span>推しカレ</span>
+            </a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('index') }}" class="nav-link">ホーム</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        <header class="page-header">
+            <h1>イベント編集</h1>
+            <p class="lead">イベント情報を編集できます。</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <ul class="flash-list">
+                    {% for category, message in messages %}
+                        <li class="flash flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <section class="card">
+            <div class="card-header">
+                <h2>編集</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-row" style="grid-template-columns: 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label" for="title">タイトル *</label>
+                            <input type="text" class="form-input" id="title" name="title" value="{{ event.title or '' }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="category">カテゴリ</label>
+                            <select class="form-input" id="category" name="category">
+                                <option value="">選択してください</option>
+                                <option value="ライブ" {% if event.category == 'ライブ' %}selected{% endif %}>ライブ</option>
+                                <option value="テレビ" {% if event.category == 'テレビ' %}selected{% endif %}>テレビ</option>
+                                <option value="ラジオ" {% if event.category == 'ラジオ' %}selected{% endif %}>ラジオ</option>
+                                <option value="イベント" {% if event.category == 'イベント' %}selected{% endif %}>イベント</option>
+                                <option value="配信" {% if event.category == '配信' %}selected{% endif %}>配信</option>
+                                <option value="リリース" {% if event.category == 'リリース' %}selected{% endif %}>リリース</option>
+                                <option value="その他" {% if event.category == 'その他' %}selected{% endif %}>その他</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row" style="grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label class="form-label" for="start">開始日時</label>
+                                <input type="datetime-local" class="form-input" id="start" name="start" 
+                                       value="{{ event.start_formatted or '' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="end">終了日時</label>
+                                <input type="datetime-local" class="form-input" id="end" name="end"
+                                       value="{{ event.end_formatted or '' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="location">場所</label>
+                            <input type="text" class="form-input" id="location" name="location" value="{{ event.location or '' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="description">説明</label>
+                            <textarea class="form-input" id="description" name="description" rows="4" style="resize: vertical;">{{ event.description or '' }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 24px;">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">キャンセル</a>
+                        <form action="{{ url_for('delete_event_edit', event_id=event_id) }}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('編集を元に戻しますか？');">編集を元に戻す</button>
+                        </form>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
+

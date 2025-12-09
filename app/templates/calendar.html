@@ -7,34 +7,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
     <style>
-        .calendar-container {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 32px;
-            box-shadow: 0 12px 32px rgba(80, 97, 139, 0.12);
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .calendar-header h2 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .calendar-actions {
-            display: flex;
-            gap: 12px;
-        }
-
         #calendar {
             --fc-border-color: var(--border);
             --fc-button-bg-color: var(--accent);
@@ -42,54 +14,89 @@
             --fc-button-hover-bg-color: var(--accent-dark);
             --fc-button-hover-border-color: var(--accent-dark);
             --fc-button-active-bg-color: var(--accent-dark);
-            --fc-today-bg-color: rgba(92, 104, 255, 0.08);
+            --fc-today-bg-color: var(--accent-bg);
+        }
+
+        .fc {
+            font-family: inherit;
+        }
+
+        .fc-toolbar-title {
+            font-size: 20px !important;
+            font-weight: 600 !important;
+        }
+
+        .fc-button {
+            border-radius: var(--radius) !important;
+            font-weight: 500 !important;
+            padding: 8px 14px !important;
         }
 
         .fc-event {
             cursor: pointer;
-            border-radius: 6px;
+            border-radius: 6px !important;
             padding: 2px 6px;
             font-size: 12px;
+            border: none !important;
         }
 
-        /* カテゴリ別の色 */
         .fc-event.category-ライブ {
             background: linear-gradient(135deg, #ff6b6b, #ee5a5a) !important;
-            border-color: #ee5a5a !important;
         }
 
         .fc-event.category-テレビ {
             background: linear-gradient(135deg, #4facfe, #00c9ff) !important;
-            border-color: #00c9ff !important;
         }
 
         .fc-event.category-ラジオ {
             background: linear-gradient(135deg, #a8e063, #56ab2f) !important;
-            border-color: #56ab2f !important;
         }
 
         .fc-event.category-イベント {
             background: linear-gradient(135deg, #f093fb, #f5576c) !important;
-            border-color: #f5576c !important;
         }
 
         .fc-event.category-配信 {
             background: linear-gradient(135deg, #667eea, #764ba2) !important;
-            border-color: #764ba2 !important;
         }
 
         .fc-event.category-リリース {
             background: linear-gradient(135deg, #ffecd2, #fcb69f) !important;
-            border-color: #fcb69f !important;
             color: #8b4513 !important;
         }
 
         .fc-event.category-その他 {
-            background: rgba(92, 104, 255, 0.7) !important;
-            border-color: var(--accent) !important;
+            background: var(--accent) !important;
         }
 
-        /* イベント詳細モーダル */
+        .fc-daygrid-day-number {
+            padding: 8px !important;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        /* モーダル */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -101,6 +108,7 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(4px);
         }
 
         .modal-overlay.active {
@@ -109,52 +117,74 @@
 
         .modal-content {
             background: var(--card-bg);
-            border-radius: 20px;
-            padding: 32px;
-            max-width: 500px;
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            max-width: 480px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-xl);
+            animation: modalIn 0.2s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            gap: 16px;
             margin-bottom: 20px;
         }
 
         .modal-header h3 {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
+            font-weight: 600;
             flex: 1;
         }
 
         .modal-close {
-            background: none;
+            background: var(--bg);
             border: none;
-            font-size: 24px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
             cursor: pointer;
             color: var(--text-muted);
-            padding: 0;
-            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
         }
 
         .modal-close:hover {
-            color: var(--text);
+            background: var(--danger-bg);
+            color: var(--danger);
         }
 
         .modal-body dl {
             margin: 0;
             display: grid;
-            gap: 12px;
+            gap: 16px;
         }
 
         .modal-body dt {
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-muted);
-            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             margin-bottom: 4px;
         }
 
@@ -163,44 +193,48 @@
             font-size: 15px;
         }
 
-        .legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px dashed var(--border);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-        }
-
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 4px;
+        .modal-body a {
+            color: var(--accent);
         }
     </style>
 </head>
 <body>
-    <main class="page">
-        <header class="page-header">
-            <div class="header-text">
-                <p class="eyebrow">カレンダー</p>
-                <h1>推し活カレンダー</h1>
-                <p class="lead">
-                    取得したイベントをカレンダー形式で確認できます。
-                </p>
+    <!-- ナビゲーション -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                <span class="navbar-logo">📅</span>
+                <span>推しカレ</span>
+            </a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('index') }}" class="nav-link">ホーム</a>
+                <a href="{{ url_for('calendar_view') }}" class="nav-link active">カレンダー</a>
             </div>
-            <div class="header-actions">
-                <a class="secondary-button" href="{{ url_for('index') }}">← ホームに戻る</a>
+        </div>
+    </nav>
+
+    <main class="page">
+        <!-- ページヘッダー -->
+        <header class="page-header">
+            <h1>
+                {% if oshi_name %}{{ oshi_name }} の{% endif %}カレンダー
+            </h1>
+            <p class="lead">
+                取得したイベントをカレンダー形式で確認できます。
+            </p>
+            <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <a href="{{ url_for('calendar_view', archived='false') }}" class="btn btn-sm {{ 'btn-primary' if not show_archived else 'btn-secondary' }}">通常表示</a>
+                <a href="{{ url_for('calendar_view', archived='true') }}" class="btn btn-sm {{ 'btn-primary' if show_archived else 'btn-secondary' }}">アーカイブ表示</a>
+                <form action="{{ url_for('clear_past_calendar_events') }}" method="post" style="margin: 0;" onsubmit="return confirm('過去のイベントをすべて削除しますか？');">
+                    <button type="submit" class="btn btn-secondary btn-sm">過去イベントを削除</button>
+                </form>
+                <form action="{{ url_for('clear_all_calendar_events') }}" method="post" style="margin: 0;" onsubmit="return confirm('すべてのイベントを削除しますか？この操作は取り消せません。');">
+                    <button type="submit" class="btn btn-danger btn-sm">すべて削除</button>
+                </form>
             </div>
         </header>
 
+        <!-- フラッシュメッセージ -->
         {% with messages = get_flashed_messages(with_categories=True) %}
             {% if messages %}
                 <ul class="flash-list">
@@ -211,23 +245,73 @@
             {% endif %}
         {% endwith %}
 
-        <div class="calendar-container">
-            <div class="calendar-header">
+        <!-- カレンダー -->
+        <section class="card">
+            <div class="card-header">
                 <h2>
-                    {% if oshi_name %}
-                        {{ oshi_name }} のスケジュール
-                    {% else %}
-                        スケジュール
+                    <span class="card-header-icon">📆</span>
+                    スケジュール
+                    {% if events %}
+                    <span class="status info" style="font-size: 12px; margin-left: 8px;">{{ events|length }}件</span>
                     {% endif %}
                 </h2>
-                <div class="calendar-actions">
-                    {% if events %}
-                        <span class="helper-text">{{ events|length }}件のイベント</span>
-                    {% endif %}
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleListView()" id="viewToggleBtn">リスト表示</button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary btn-sm">← ホームに戻る</a>
                 </div>
             </div>
-
-            {% if events %}
+            <div class="card-body">
+                <!-- リスト表示 -->
+                <div id="listView" style="display: none;">
+                    <form id="eventListForm" method="post" action="{{ url_for('delete_selected_calendar_events') }}">
+                        <div style="margin-bottom: 16px; display: flex; gap: 8px; align-items: center;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="selectAll()">すべて選択</button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll()">選択解除</button>
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('選択したイベントを削除しますか？');">選択したイベントを削除</button>
+                            <span id="selectedCount" style="margin-left: auto; color: var(--text-muted); font-size: 14px;">0件選択</span>
+                        </div>
+                        <div class="events-table-wrapper">
+                            <table class="events-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"></th>
+                                        <th>日時</th>
+                                        <th>カテゴリ</th>
+                                        <th>イベント名</th>
+                                        <th>場所</th>
+                                        <th style="width: 120px;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for event in events %}
+                                    <tr>
+                                        <td><input type="checkbox" name="selected_events" value="{{ event.source_id }}" class="event-checkbox" onchange="updateSelectedCount()"></td>
+                                        <td>
+                                            {{ event.start.astimezone().strftime("%Y/%m/%d %H:%M") }}
+                                            {% if event.end %}
+                                            〜 {{ event.end.astimezone().strftime("%H:%M") }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="category-badge category-{{ event.category or 'その他' }}">
+                                                {{ event.category or "その他" }}
+                                            </span>
+                                        </td>
+                                        <td>{{ event.title }}</td>
+                                        <td>{{ event.location or "未定" }}</td>
+                                        <td>
+                                            <a href="{{ url_for('edit_calendar_event', event_id=event.source_id) }}" class="btn btn-secondary btn-sm">編集</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+                <!-- カレンダー表示 -->
+                <div id="calendarView">
+                {% if events %}
                 <div id="calendar"></div>
                 <div class="legend">
                     <div class="legend-item">
@@ -255,14 +339,22 @@
                         <span>リリース</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-color" style="background: rgba(92, 104, 255, 0.7);"></div>
+                        <div class="legend-color" style="background: var(--accent);"></div>
                         <span>その他</span>
                     </div>
                 </div>
-            {% else %}
-                <p class="empty-state">表示するイベントがありません。先にホームページからイベントを取得してください。</p>
-            {% endif %}
-        </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-title">表示するイベントがありません</div>
+                    <p class="empty-state-text">
+                        先にホームページからイベントを取得してください。
+                    </p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary" style="margin-top: 16px;">ホームへ移動</a>
+                </div>
+                {% endif %}
+            </div>
+        </section>
     </main>
 
     <!-- イベント詳細モーダル -->
@@ -270,7 +362,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle"></h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <button class="modal-close" onclick="closeModal()">×</button>
             </div>
             <div class="modal-body">
                 <dl>
@@ -292,9 +384,31 @@
                     </div>
                     <div id="modalUrlContainer">
                         <dt>リンク</dt>
-                        <dd><a id="modalUrl" href="#" target="_blank" rel="noopener noreferrer">詳細ページを開く</a></dd>
+                        <dd><a id="modalUrl" href="#" target="_blank" rel="noopener noreferrer">詳細ページを開く →</a></dd>
                     </div>
                 </dl>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <div style="margin-bottom: 12px;">
+                        <label class="form-label" for="eventMemo">メモ</label>
+                        <textarea class="form-input" id="eventMemo" name="memo_text" rows="3" placeholder="イベントに関するメモを入力..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <form id="memoForm" method="post" style="margin: 0;">
+                            <input type="hidden" name="memo_text" id="memoTextInput">
+                            <button type="submit" class="btn btn-secondary btn-sm">メモを保存</button>
+                        </form>
+                        <form id="shareForm" method="post" style="margin: 0;">
+                            <input type="hidden" name="expires_days" value="30">
+                            <button type="submit" class="btn btn-secondary btn-sm">共有URLを生成</button>
+                        </form>
+                        <form id="archiveForm" method="post" style="margin: 0; display: none;">
+                            <button type="submit" class="btn btn-secondary btn-sm">アーカイブ</button>
+                        </form>
+                        <form id="unarchiveForm" method="post" style="margin: 0; display: none;">
+                            <button type="submit" class="btn btn-secondary btn-sm">復元</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -310,6 +424,7 @@
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'ja',
+                height: 'auto',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
@@ -328,6 +443,7 @@
                     end: event.end,
                     classNames: ['category-' + (event.category || 'その他')],
                     extendedProps: {
+                        source_id: event.source_id,
                         category: event.category || 'その他',
                         location: event.location || '',
                         description: event.description || '',
@@ -338,7 +454,10 @@
                     showEventModal(info.event);
                 },
                 eventDidMount: function(info) {
-                    info.el.title = info.event.title;
+                    // イベントにsource_idを保存
+                    if (info.event.extendedProps.source_id) {
+                        info.el.dataset.sourceId = info.event.extendedProps.source_id;
+                    }
                 }
             });
 
@@ -373,21 +492,63 @@
                 event.extendedProps.location || '未定';
             
             const descContainer = document.getElementById('modalDescriptionContainer');
-            const descEl = document.getElementById('modalDescription');
             if (event.extendedProps.description) {
                 descContainer.style.display = 'block';
-                descEl.textContent = event.extendedProps.description;
+                document.getElementById('modalDescription').textContent = event.extendedProps.description;
             } else {
                 descContainer.style.display = 'none';
             }
             
             const urlContainer = document.getElementById('modalUrlContainer');
-            const urlEl = document.getElementById('modalUrl');
             if (event.extendedProps.url) {
                 urlContainer.style.display = 'block';
-                urlEl.href = event.extendedProps.url;
+                document.getElementById('modalUrl').href = event.extendedProps.url;
             } else {
                 urlContainer.style.display = 'none';
+            }
+            
+            // メモと共有ボタンの設定
+            const sourceId = event.extendedProps.source_id;
+            const memoForm = document.getElementById('memoForm');
+            const shareForm = document.getElementById('shareForm');
+            const archiveForm = document.getElementById('archiveForm');
+            const unarchiveForm = document.getElementById('unarchiveForm');
+            
+            if (sourceId) {
+                memoForm.action = '/events/' + encodeURIComponent(sourceId) + '/memo';
+                shareForm.action = '/events/' + encodeURIComponent(sourceId) + '/share';
+                
+                // メモの読み込み（非同期）
+                fetch('/api/events/' + encodeURIComponent(sourceId) + '/memo')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.memo) {
+                            document.getElementById('eventMemo').value = data.memo;
+                        }
+                    })
+                    .catch(() => {});
+                
+                // メモ保存フォームの設定
+                memoForm.addEventListener('submit', function(e) {
+                    document.getElementById('memoTextInput').value = document.getElementById('eventMemo').value;
+                });
+                
+                // アーカイブ/復元ボタンの設定
+                const showArchived = {{ 'true' if show_archived else 'false' }};
+                if (showArchived) {
+                    archiveForm.style.display = 'none';
+                    unarchiveForm.style.display = 'block';
+                    unarchiveForm.action = '/events/' + encodeURIComponent(sourceId) + '/unarchive';
+                } else {
+                    archiveForm.style.display = 'block';
+                    unarchiveForm.style.display = 'none';
+                    archiveForm.action = '/events/' + encodeURIComponent(sourceId) + '/archive';
+                }
+            } else {
+                memoForm.style.display = 'none';
+                shareForm.style.display = 'none';
+                archiveForm.style.display = 'none';
+                unarchiveForm.style.display = 'none';
             }
             
             document.getElementById('eventModal').classList.add('active');
@@ -397,18 +558,54 @@
             document.getElementById('eventModal').classList.remove('active');
         }
 
-        document.getElementById('eventModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
+        // リスト表示とカレンダー表示の切り替え
+        function toggleListView() {
+            const listView = document.getElementById('listView');
+            const calendarView = document.getElementById('calendarView');
+            const toggleBtn = document.getElementById('viewToggleBtn');
+            
+            if (listView.style.display === 'none') {
+                listView.style.display = 'block';
+                calendarView.style.display = 'none';
+                toggleBtn.textContent = 'カレンダー表示';
+            } else {
+                listView.style.display = 'none';
+                calendarView.style.display = 'block';
+                toggleBtn.textContent = 'リスト表示';
             }
+        }
+
+        // すべて選択/選択解除
+        function selectAll() {
+            document.querySelectorAll('.event-checkbox').forEach(cb => cb.checked = true);
+            document.getElementById('selectAllCheckbox').checked = true;
+            updateSelectedCount();
+        }
+
+        function deselectAll() {
+            document.querySelectorAll('.event-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAllCheckbox').checked = false;
+            updateSelectedCount();
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAllCheckbox').checked;
+            document.querySelectorAll('.event-checkbox').forEach(cb => cb.checked = selectAll);
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const selected = document.querySelectorAll('.event-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = `${selected}件選択`;
+        }
+
+        document.getElementById('eventModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
         });
 
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
+            if (e.key === 'Escape') closeModal();
         });
     </script>
 </body>
 </html>
-
